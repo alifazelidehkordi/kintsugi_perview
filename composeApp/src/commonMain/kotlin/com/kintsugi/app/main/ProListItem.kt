@@ -1,0 +1,54 @@
+/**
+ *     Kintsugi Productivity
+ *     Copyright (C) 2025 Ali Fazeli
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.kintsugi.app.main
+
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import com.kintsugi.app.platform.isFDroid
+import com.kintsugi.app.ui.IconTextButton
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.Heart
+import compose.icons.evaicons.outline.Unlock
+import kintsugi_productivity.composeapp.generated.resources.Res
+import kintsugi_productivity.composeapp.generated.resources.support_development
+import kintsugi_productivity.composeapp.generated.resources.unlock_premium
+import org.jetbrains.compose.resources.stringResource
+
+@Composable
+fun ProListItem(
+    subtitle: String? = null,
+    centered: Boolean = false,
+    onClick: () -> Unit,
+) {
+    val title =
+        if (isFDroid()) stringResource(Res.string.support_development) else stringResource(Res.string.unlock_premium)
+    val icon = if (isFDroid()) EvaIcons.Outline.Heart else EvaIcons.Outline.Unlock
+    IconTextButton(
+        title = title,
+        subtitle = subtitle,
+        icon = {
+            Icon(
+                imageVector = icon,
+                contentDescription = title,
+            )
+        },
+        isFilled = true,
+        centered = centered,
+    ) { onClick() }
+}

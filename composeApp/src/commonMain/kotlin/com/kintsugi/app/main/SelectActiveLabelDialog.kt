@@ -1,0 +1,122 @@
+/**
+ *     Kintsugi Productivity
+ *     Copyright (C) 2025 Ali Fazeli
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.kintsugi.app.main
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kintsugi.app.data.model.Label
+import com.kintsugi.app.data.model.getLabelData
+import com.kintsugi.app.data.model.isDefault
+import com.kintsugi.app.labels.main.LabelsViewModel
+import com.kintsugi.app.labels.main.unarchivedLabels
+import com.kintsugi.app.ui.AlertDialogButtonStack
+import com.kintsugi.app.ui.SelectLabelDialog
+import kintsugi_productivity.composeapp.generated.resources.Res
+import kintsugi_productivity.composeapp.generated.resources.labels_clear_label
+import kintsugi_productivity.composeapp.generated.resources.labels_edit_active_label
+import kintsugi_productivity.composeapp.generated.resources.labels_edit_labels
+import kintsugi_productivity.composeapp.generated.resources.labels_select_active_label
+import kintsugi_productivity.composeapp.generated.resources.settings_timer_durations_title
+import kintsugi_productivity.composeapp.generated.resources.stats_no_items
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+
+@Composable
+fun SelectActiveLabelDialog(
+    viewModel: LabelsViewModel = koinViewModel(),
+    initialSelectedLabel: String,
+    onNavigateToLabels: () -> Unit,
+    onNavigateToActiveLabel: () -> Unit,
+    onNavigateToTimerDurations: () -> Unit,
+    onClearLabel: () -> Unit,
+    onDismiss: () -> Unit,
+    onConfirm: (List<String>) -> Unit,
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val labels = uiState.unarchivedLabels.filter { !it.isDefault() }.map { it.getLabelData() }
+
+    val labelsIsEmpty = labels.isEmpty()
+    val isDefaultLabelActive = initialSelectedLabel == Label.DEFAULT_LABEL_NAME
+
+    if (uiState.isLoading) return
+    SelectLabelDialog(
+        title = stringResource(Res.string.labels_select_active_label),
+        singleSelection = true,
+        labels = labels,
+        initialSelectedLabels = listOf(initialSelectedLabel),
+        onDismiss = onDismiss,
+        onConfirm = onConfirm,
+        extraContent = {
+            if (labelsIsEmpty) EmptyState()
+        },
+        buttons = {
+            AlertDialogButtonStack {
+                TextButton(onClick = {
+                    if (isDefaultLabelActive) {
+                        onNavigateToTimerDurations()
+                    } else {
+                        onNavigateToActiveLabel()
+                    }
+                }) {
+                    Text(
+                        stringResource(
+                            if (labelsIsEmpty || isDefaultLabelActive) {
+                                Res.string.settings_timer_durations_title
+                            } else {
+                                Res.string.labels_edit_active_label
+                            },
+                        ),
+                    )
+                }
+                if (!isDefaultLabelActive) {
+                    TextButton(onClick = onClearLabel) { Text(stringResource(Res.string.labels_clear_label)) }
+                }
+                TextButton(onClick = onNavigateToLabels) { Text(stringResource(Res.string.labels_edit_labels)) }
+            }
+        },
+    )
+}
+
+@Composable
+private fun EmptyState() {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = stringResource(Res.string.stats_no_items),
+            style =
+                MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                ),
+        )
+    }
+}

@@ -1,0 +1,46 @@
+/**
+ *     Kintsugi Productivity
+ *     Copyright (C) 2025 Ali Fazeli
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.kintsugi.app.data.local
+
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
+import androidx.room.PrimaryKey
+
+@Entity(
+    tableName = "localHabitStatus",
+    foreignKeys = [
+        ForeignKey(
+            entity = LocalHabit::class,
+            parentColumns = ["id"],
+            childColumns = ["habitId"],
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
+    indices = [
+        Index(value = ["habitId"]),
+        Index(value = ["habitId", "dateEpochDays"], unique = true),
+    ],
+)
+data class LocalHabitStatus(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val habitId: Long,
+    val dateEpochDays: Int,
+)
