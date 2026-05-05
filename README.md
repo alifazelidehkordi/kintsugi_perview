@@ -98,8 +98,8 @@ The iOS app target is configured with deployment target `18.2`. The Live Activit
 ### Android
 
 ```bash
-git clone https://github.com/alifazelidehkordi/kintsugi_perview.git
-cd kintsugi_perview
+git clone https://github.com/alifazelidehkordi/kintsugi_preview.git
+cd kintsugi_preview
 
 ./gradlew :composeApp:assembleGoogleDebug
 ./gradlew :composeApp:assembleFdroidDebug

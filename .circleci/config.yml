@@ -30,4 +30,6 @@ workflows:
           filters:
             branches:
               only:
+                - main
                 - master
+                - /^ui\/.*/
