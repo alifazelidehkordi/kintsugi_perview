@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Kintsugi Productivity
+    Copyright (C) 2025 Ali Fazeli
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<resources>
+    <string name="backup_and_restore_title">সংরক্ষণ এবং পুনরূদ্ধার</string>
+    <string name="backup_export_backup">ব্যাক-আপ রপ্তানি করুন</string>
+    <string name="backup_the_file_can_be_imported_back">ফাইলটি আবার আমদানি করা যায়</string>
+    <string name="backup_restore_backup">ব্যাকআপ পুনর্বহাল</string>
+    <string name="backup_export_csv">CSV রপ্তানি করুন</string>
+    <string name="backup_export_json">CSV রপ্তানি করুন</string>
+    <string name="backup_completed_successfully">ব্যাকআপ সফলভাবে সম্পন্ন হয়েছে</string>
+    <string name="backup_failed_please_try_again">ব্যাকআপ ব্যর্থ হয়েছে৷ আবার চেষ্টা করুন</string>
+    <string name="backup_restore_completed_successfully">পুনরুদ্ধার সফলভাবে সম্পন্ন হয়েছে।</string>
+    <string name="backup_restore_failed_please_try_again">পুনরুদ্ধার ব্যর্থ হয়েছে। আবার চেষ্টা করুন</string>
+    <string name="backup_auto_backup">অটো ব্যাকআপ</string>
+</resources>
