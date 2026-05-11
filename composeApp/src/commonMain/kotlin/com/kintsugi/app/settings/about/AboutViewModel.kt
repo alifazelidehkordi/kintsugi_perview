@@ -43,7 +43,7 @@ class AboutViewModel(
 
     companion object {
         const val GOOGLE_PLAY_URL = "https://play.google.com/store/apps/details?id=com.kintsugi.app"
-        const val REPO_URL = "https://github.com/alifazelidehkordi/kintsugi_preview"
+        const val REPO_URL = "https://github.com/alifazelidehkordi/kintsugi-preview"
         const val TRANSLATE_URL = "https://crowdin.com/project/kintsugi"
     }
 }

@@ -128,7 +128,11 @@ class HabitsViewModel(
                         )
                     }
 
-                val todayHabits = items.filter { it.isScheduledToday || (it.habit.isOneTime && it.completionLevel == 0) }
+                val todayHabits =
+                    items.filter {
+                        it.isScheduledToday ||
+                            (it.habit.isOneTime && (it.completionLevel > 0 || it.analytics.statuses.none { s -> s.level == 2 }))
+                    }
 
                 val dashboardData = buildHabitDashboardData(habits, allStatuses, allEntries, today)
                 val domainScores = dashboardData.domainScores.mapValues { it.value / 100f }

@@ -17,6 +17,7 @@
  */
 package com.kintsugi.app.habits
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -172,7 +173,7 @@ fun HabitsScreen(
                 items(displayedHabits, key = { it.habit.id }) { item ->
                     HabitCard(
                         habitWithAnalytics = item.analytics,
-                        completionLevel = item.completionLevel,
+                        completed = item.completionLevel > 0,
                         action = { action ->
                             when (action) {
                                 is HabitsAction.InsertStatus -> viewModel.toggleCompletedToday(item)
@@ -267,9 +268,10 @@ private fun BalanceScreen(
                             val score = domainScores[domain] ?: 0f
                             val isSelected = selectedDomain == domain
                             Card(
-                                modifier = Modifier.weight(1f).clickable {
-                                    selectedDomain = if (isSelected) null else domain
-                                },
+                                modifier =
+                                    Modifier.weight(1f).clickable {
+                                        selectedDomain = if (isSelected) null else domain
+                                    },
                                 colors =
                                     CardDefaults.cardColors(
                                         containerColor =
@@ -279,7 +281,15 @@ private fun BalanceScreen(
                                                 MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                                             },
                                     ),
-                                border = if (isSelected) androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null,
+                                border =
+                                    if (isSelected) {
+                                        androidx.compose.foundation.BorderStroke(
+                                            2.dp,
+                                            MaterialTheme.colorScheme.primary,
+                                        )
+                                    } else {
+                                        null
+                                    },
                             ) {
                                 Row(
                                     modifier = Modifier.padding(16.dp),
@@ -319,7 +329,7 @@ private fun BalanceScreen(
                         domainHabits.forEach { item ->
                             HabitCard(
                                 habitWithAnalytics = item.analytics,
-                                completionLevel = item.completionLevel,
+                                completed = item.completionLevel > 0,
                                 action = { /* Actions from balance screen could be restricted or enabled */ },
                                 onNavigateToAnalytics = { /* TODO */ },
                                 editState = false,
