@@ -55,6 +55,7 @@ It combines Pomodoro sessions, open-ended count-up flow tracking, habits, one-ti
 - 🔐 **Local-first data ownership**: store productivity data on-device, then export or back it up when needed.
 - ☁️ **Flexible backup options**: use manual backups, Android local backups, Google Drive in the Google flavor, or iCloud support on iOS.
 - 🎨 **Deep customization**: tune themes, timer display, notifications, sounds, vibration, torch, fullscreen mode, and focus protection.
+- 🇮🇷 **Persian Locale & RTL**: custom IRANSans typography for Persian languages alongside native RTL support.
 - 🧱 **Real Kotlin Multiplatform architecture**: share Compose UI and business logic while keeping Android and iOS integrations native.
 
 <a id="platform-status"></a>
@@ -107,6 +108,7 @@ iOS does not produce an APK-style artifact. Build and distribute the iOS app thr
 
 - ✅ **Habit and one-time task management.**
 - 🥇 **MVE vs Goal Tracking**: Each habit or task can be completed at two different levels (MVE or Goal). Long-press a card for explicit selection or quick-tap the circle icon to cycle through levels.
+- 🇮🇷 **RTL & Persian Typography**: globally integrated IRANSans font family for Persian locales alongside RTL-friendly layouts and localized calendar/day selectors.
 - 🏷️ **Custom labels** with archive, duplicate, reorder, and color options.
 - ⏲️ **Per-label timer profiles** with custom durations and long-break behavior.
 - ✏️ **Editable history** and manual session creation.
