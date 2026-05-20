@@ -18,6 +18,7 @@
 package com.kintsugi.app.habits
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -68,6 +69,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kintsugi.app.common.Time
@@ -78,6 +80,8 @@ import com.kintsugi.app.ui.TopBar
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Plus
+import io.github.adrcotfas.datetime.names.TextStyle
+import io.github.adrcotfas.datetime.names.getDisplayName
 import kintsugi_productivity.composeapp.generated.resources.Res
 import kintsugi_productivity.composeapp.generated.resources.habits_add
 import kintsugi_productivity.composeapp.generated.resources.habits_add_habit
@@ -584,25 +588,45 @@ private fun DailyReviewCard(
             ) {
                 (1..10).forEach { value ->
                     val isSelected = energy == value
-                    val backgroundColor =
-                        if (isSelected) {
-                            MaterialTheme.colorScheme.primaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                        }
-                    val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
+                    val animatedBgColor by animateColorAsState(
+                        targetValue =
+                            if (isSelected) {
+                                MaterialTheme.colorScheme.primaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                            },
+                        label = "energyBg_$value",
+                    )
+                    val animatedBorderColor by animateColorAsState(
+                        targetValue =
+                            if (isSelected) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                Color.Transparent
+                            },
+                        label = "energyBorder_$value",
+                    )
+                    val animatedTextColor by animateColorAsState(
+                        targetValue =
+                            if (isSelected) {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                        label = "energyText_$value",
+                    )
 
                     Box(
                         modifier =
                             Modifier
                                 .size(40.dp)
                                 .clip(CircleShape)
-                                .background(backgroundColor)
-                                .border(2.dp, borderColor, CircleShape)
+                                .background(animatedBgColor)
+                                .border(2.dp, animatedBorderColor, CircleShape)
                                 .clickable { onEnergyChange(value) },
                         contentAlignment = Alignment.Center,
                     ) {
-                        Text(value.toString(), style = MaterialTheme.typography.labelLarge)
+                        Text(value.toString(), style = MaterialTheme.typography.labelLarge, color = animatedTextColor)
                     }
                 }
             }
@@ -792,24 +816,54 @@ private fun AddHabitDialog(
                 Text(stringResource(Res.string.habits_domain), style = MaterialTheme.typography.labelMedium)
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     domains.forEach { d ->
                         val isSelected = domain == d
-                        TextButton(
-                            onClick = { domain = d },
-                            modifier = Modifier.weight(1f),
-                            contentPadding = PaddingValues(0.dp),
-                            colors =
+                        val animatedBgColor by animateColorAsState(
+                            targetValue =
                                 if (isSelected) {
-                                    ButtonDefaults.textButtonColors(
-                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                    )
+                                    MaterialTheme.colorScheme.primaryContainer
                                 } else {
-                                    ButtonDefaults.textButtonColors()
+                                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
                                 },
+                            label = "domainBg_$d",
+                        )
+                        val animatedContentColor by animateColorAsState(
+                            targetValue =
+                                if (isSelected) {
+                                    MaterialTheme.colorScheme.onPrimaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                },
+                            label = "domainContent_$d",
+                        )
+                        val animatedBorderColor by animateColorAsState(
+                            targetValue =
+                                if (isSelected) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    Color.Transparent
+                                },
+                            label = "domainBorder_$d",
+                        )
+
+                        Box(
+                            modifier =
+                                Modifier
+                                    .clip(MaterialTheme.shapes.medium)
+                                    .background(animatedBgColor)
+                                    .border(1.dp, animatedBorderColor, MaterialTheme.shapes.medium)
+                                    .clickable { domain = d }
+                                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                            contentAlignment = Alignment.Center,
                         ) {
-                            Text(text = d, style = MaterialTheme.typography.labelSmall)
+                            Text(
+                                text = d,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = animatedContentColor,
+                            )
                         }
                     }
                 }
@@ -854,25 +908,31 @@ private fun AddHabitDialog(
                     ) {
                         for (day in DayOfWeek.entries) {
                             val isSelected = selectedDays.contains(day)
-                            val color =
-                                if (isSelected) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.surfaceVariant
-                                }
-                            val textColor =
-                                if (isSelected) {
-                                    MaterialTheme.colorScheme.onPrimary
-                                } else {
-                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                }
+                            val animatedColor by animateColorAsState(
+                                targetValue =
+                                    if (isSelected) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.surfaceVariant
+                                    },
+                                label = "dayBg_${day.name}",
+                            )
+                            val animatedTextColor by animateColorAsState(
+                                targetValue =
+                                    if (isSelected) {
+                                        MaterialTheme.colorScheme.onPrimary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                label = "dayText_${day.name}",
+                            )
 
                             Box(
                                 modifier =
                                     Modifier
-                                        .size(32.dp)
+                                        .size(36.dp)
                                         .clip(CircleShape)
-                                        .background(color)
+                                        .background(animatedColor)
                                         .clickable {
                                             selectedDays =
                                                 if (isSelected) {
@@ -884,9 +944,10 @@ private fun AddHabitDialog(
                                 contentAlignment = Alignment.Center,
                             ) {
                                 Text(
-                                    text = day.name.take(1),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = textColor,
+                                    text = day.getDisplayName(TextStyle.NARROW_STANDALONE),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = animatedTextColor,
                                 )
                             }
                         }

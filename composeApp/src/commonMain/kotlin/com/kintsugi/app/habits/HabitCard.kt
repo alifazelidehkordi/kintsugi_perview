@@ -67,6 +67,8 @@ import com.kintsugi.app.data.model.HabitWithAnalytics
 import com.kintsugi.app.ui.SubtleHorizontalDivider
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
+import io.github.adrcotfas.datetime.names.TextStyle
+import io.github.adrcotfas.datetime.names.getDisplayName
 import kintsugi_productivity.composeapp.generated.resources.Res
 import kintsugi_productivity.composeapp.generated.resources.analytics
 import kintsugi_productivity.composeapp.generated.resources.circle_border
@@ -282,10 +284,22 @@ fun HabitCard(
                             weekDay.date <= today &&
                                 weekDay.date.dayOfWeek in habitWithAnalytics.habit.scheduledDays
 
+                        val cellTextColor =
+                            if (done) {
+                                if (dayStatus?.level == 2) {
+                                    MaterialTheme.colorScheme.onPrimary
+                                } else {
+                                    MaterialTheme.colorScheme.onSecondary
+                                }
+                            } else {
+                                cardContent
+                            }
+
                         Box(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
+                                    .padding(horizontal = 2.dp, vertical = 2.dp)
                                     .then(
                                         if (done) {
                                             Modifier.background(
@@ -295,12 +309,12 @@ fun HabitCard(
                                                     } else {
                                                         MaterialTheme.colorScheme.secondary
                                                     },
-                                                shape = RoundedCornerShape(20.dp),
+                                                shape = RoundedCornerShape(12.dp),
                                             )
                                         } else {
                                             Modifier
                                         },
-                                    ).clip(shape = RoundedCornerShape(20.dp))
+                                    ).clip(shape = RoundedCornerShape(12.dp))
                                     .clickable(
                                         role = Role.Button,
                                         enabled = validDay,
@@ -311,22 +325,19 @@ fun HabitCard(
                             contentAlignment = Alignment.Center,
                         ) {
                             Column(
-                                modifier = Modifier.padding(6.dp),
+                                modifier = Modifier.padding(vertical = 6.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Text(
                                     text = weekDay.date.dayOfMonth.toString(),
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (done) MaterialTheme.colorScheme.onPrimary else cardContent,
+                                    color = cellTextColor.copy(alpha = if (validDay) 1f else 0.4f),
                                 )
                                 Text(
-                                    text =
-                                        weekDay.date.dayOfWeek
-                                            .toString()
-                                            .take(3),
+                                    text = weekDay.date.dayOfWeek.getDisplayName(TextStyle.NARROW_STANDALONE),
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = if (done) MaterialTheme.colorScheme.onPrimary else cardContent,
+                                    color = cellTextColor.copy(alpha = if (validDay) 0.8f else 0.3f),
                                 )
                             }
                         }
