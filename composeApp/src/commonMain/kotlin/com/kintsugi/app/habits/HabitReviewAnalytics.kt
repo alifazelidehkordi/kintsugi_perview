@@ -69,10 +69,17 @@ fun buildHabitDashboardData(
             .minWithOrNull(compareBy<HabitPeriodSummary> { it.currentStreak }.thenBy { it.scorePercent ?: 0 })
 
     val domainScores =
-        weeklySummaries
-            .filter { it.habit.domain.isNotBlank() && it.scheduledTotal > 0 && it.scorePercent != null }
-            .groupBy { it.habit.domain }
-            .mapValues { (_, summaries) -> summaries.mapNotNull { it.scorePercent }.average().toInt() }
+        habits
+            .filter { it.domain.isNotBlank() }
+            .groupBy { it.domain }
+            .mapValues { (domain, domainHabits) ->
+                val summaries = weeklySummaries.filter { it.habit.domain == domain && it.scheduledTotal > 0 }
+                if (summaries.isEmpty()) {
+                    100 // If no habits in this domain were scheduled this week, it's "balanced"
+                } else {
+                    summaries.mapNotNull { it.scorePercent }.average().toInt()
+                }
+            }
 
     val recentEntries = dailyEntries.filter { it.dateEpochDays >= today.toEpochDays().toInt() - 6 }
     val topObstacle =

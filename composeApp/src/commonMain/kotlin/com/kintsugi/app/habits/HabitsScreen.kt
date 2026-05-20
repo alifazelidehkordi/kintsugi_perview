@@ -45,7 +45,7 @@ import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -67,20 +67,72 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kintsugi.app.common.Time
-import com.kintsugi.app.data.model.HabitWithAnalytics
+import com.kintsugi.app.data.model.Habit
+import com.kintsugi.app.data.model.HabitStatus
 import com.kintsugi.app.ui.DatePickerDialog
 import com.kintsugi.app.ui.TopBar
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Plus
+import kintsugi_productivity.composeapp.generated.resources.Res
+import kintsugi_productivity.composeapp.generated.resources.habits_add
+import kintsugi_productivity.composeapp.generated.resources.habits_add_habit
+import kintsugi_productivity.composeapp.generated.resources.habits_add_task
+import kintsugi_productivity.composeapp.generated.resources.habits_balance_title
+import kintsugi_productivity.composeapp.generated.resources.habits_custom_obstacle
+import kintsugi_productivity.composeapp.generated.resources.habits_daily_review_title
+import kintsugi_productivity.composeapp.generated.resources.habits_date
+import kintsugi_productivity.composeapp.generated.resources.habits_domain
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_body
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_career
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_discipline
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_empty
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_habits
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_mind
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_relationships
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_spirit
+import kintsugi_productivity.composeapp.generated.resources.habits_empty_all
+import kintsugi_productivity.composeapp.generated.resources.habits_empty_today
+import kintsugi_productivity.composeapp.generated.resources.habits_energy_fluctuation
+import kintsugi_productivity.composeapp.generated.resources.habits_energy_today
+import kintsugi_productivity.composeapp.generated.resources.habits_goal_label
+import kintsugi_productivity.composeapp.generated.resources.habits_habit
+import kintsugi_productivity.composeapp.generated.resources.habits_icon
+import kintsugi_productivity.composeapp.generated.resources.habits_kintsugi_quote
+import kintsugi_productivity.composeapp.generated.resources.habits_mve_label
+import kintsugi_productivity.composeapp.generated.resources.habits_name
+import kintsugi_productivity.composeapp.generated.resources.habits_no_obstacle
+import kintsugi_productivity.composeapp.generated.resources.habits_note_label
+import kintsugi_productivity.composeapp.generated.resources.habits_notes
+import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_low_sleep
+import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_no_plan
+import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_noisy_place
+import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_stress
+import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_tired
+import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_today
+import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_unwell
+import kintsugi_productivity.composeapp.generated.resources.habits_select_date
+import kintsugi_productivity.composeapp.generated.resources.habits_select_days
+import kintsugi_productivity.composeapp.generated.resources.habits_tab_all
+import kintsugi_productivity.composeapp.generated.resources.habits_tab_balance
+import kintsugi_productivity.composeapp.generated.resources.habits_tab_today
+import kintsugi_productivity.composeapp.generated.resources.habits_task
+import kintsugi_productivity.composeapp.generated.resources.habits_times
+import kintsugi_productivity.composeapp.generated.resources.habits_title
+import kintsugi_productivity.composeapp.generated.resources.habits_top_obstacles
+import kintsugi_productivity.composeapp.generated.resources.main_cancel
+import kintsugi_productivity.composeapp.generated.resources.main_edit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,30 +146,31 @@ fun HabitsScreen(
     if (uiState.isLoading) return
 
     var showAddDialog by remember { mutableStateOf(false) }
+    var editHabit by remember { mutableStateOf<Habit?>(null) }
     var selectedTab by remember { mutableStateOf(0) }
 
     Scaffold(
         topBar = {
             Column {
                 TopBar(
-                    title = "Habits & Tasks",
+                    title = stringResource(Res.string.habits_title),
                     onNavigateBack = onNavigateBack,
                 )
                 TabRow(selectedTabIndex = selectedTab) {
                     Tab(
                         selected = selectedTab == 0,
                         onClick = { selectedTab = 0 },
-                        text = { Text("Today") },
+                        text = { Text(stringResource(Res.string.habits_tab_today)) },
                     )
                     Tab(
                         selected = selectedTab == 1,
                         onClick = { selectedTab = 1 },
-                        text = { Text("All") },
+                        text = { Text(stringResource(Res.string.habits_tab_all)) },
                     )
                     Tab(
                         selected = selectedTab == 2,
                         onClick = { selectedTab = 2 },
-                        text = { Text("Balance") },
+                        text = { Text(stringResource(Res.string.habits_tab_balance)) },
                     )
                 }
             }
@@ -126,9 +179,12 @@ fun HabitsScreen(
             FloatingActionButton(
                 modifier = Modifier.size(72.dp),
                 shape = CircleShape,
-                onClick = { showAddDialog = true },
+                onClick = {
+                    editHabit = null
+                    showAddDialog = true
+                },
             ) {
-                Icon(EvaIcons.Outline.Plus, "Add")
+                Icon(EvaIcons.Outline.Plus, stringResource(Res.string.habits_add))
             }
         },
         floatingActionButtonPosition = FabPosition.End,
@@ -157,7 +213,14 @@ fun HabitsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = if (selectedTab == 0) "No tasks for today" else "No habits yet",
+                    text =
+                        if (selectedTab ==
+                            0
+                        ) {
+                            stringResource(Res.string.habits_empty_today)
+                        } else {
+                            stringResource(Res.string.habits_empty_all)
+                        },
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
@@ -173,11 +236,15 @@ fun HabitsScreen(
                 items(displayedHabits, key = { it.habit.id }) { item ->
                     HabitCard(
                         habitWithAnalytics = item.analytics,
-                        completed = item.completionLevel > 0,
+                        completionLevel = item.completionLevel,
                         action = { action ->
                             when (action) {
-                                is HabitsAction.InsertStatus -> viewModel.toggleCompletedToday(item)
-                                is HabitsAction.ArchiveHabit -> viewModel.archiveHabit(item.habit)
+                                is HabitsAction.InsertStatus -> viewModel.updateHabitStatus(action)
+                                is HabitsAction.ArchiveHabit -> viewModel.archiveHabit(action.habit)
+                                is HabitsAction.UpdateHabit -> {
+                                    editHabit = action.habit
+                                    showAddDialog = true
+                                }
                                 else -> Unit
                             }
                         },
@@ -202,11 +269,13 @@ fun HabitsScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         DailyReviewCard(
                             energy = uiState.dailyEntry?.energy ?: 0,
-                            obstacle = uiState.dailyEntry?.obstacle?.takeIf { it.isNotEmpty() } ?: "بدون مانع",
+                            obstacle =
+                                uiState.dailyEntry?.obstacle?.takeIf { it.isNotEmpty() } ?: stringResource(Res.string.habits_no_obstacle),
                             note = uiState.dailyEntry?.note.orEmpty(),
                             onEnergyChange = { energy -> viewModel.updateDailyEntry(energy = energy) },
                             onObstacleChange = { obstacle -> viewModel.updateDailyEntry(obstacle = obstacle) },
                             onNoteChange = { note -> viewModel.updateDailyEntry(note = note) },
+                            recentEntries = uiState.recentEntries,
                         )
                     }
                 }
@@ -216,20 +285,41 @@ fun HabitsScreen(
 
     if (showAddDialog) {
         AddHabitDialog(
-            onDismiss = { showAddDialog = false },
-            onConfirm = { title, description, days, isOneTime, dueDate, icon, domain, mve, goal ->
-                viewModel.addHabit(
-                    title,
-                    description,
-                    days,
-                    isOneTime = isOneTime,
-                    dueDate = dueDate,
-                    icon = icon,
-                    domain = domain,
-                    mve = mve,
-                    goal = goal,
-                )
+            initialHabit = editHabit,
+            onDismiss = {
                 showAddDialog = false
+                editHabit = null
+            },
+            onConfirm = { title, description, days, isOneTime, dueDate, icon, domain, mve, goal ->
+                if (editHabit != null) {
+                    viewModel.updateHabit(
+                        editHabit!!.copy(
+                            title = title,
+                            description = description,
+                            scheduledDays = days,
+                            isOneTime = isOneTime,
+                            dueDate = dueDate,
+                            icon = icon,
+                            domain = domain,
+                            mve = mve,
+                            goal = goal,
+                        ),
+                    )
+                } else {
+                    viewModel.addHabit(
+                        title,
+                        description,
+                        days,
+                        isOneTime = isOneTime,
+                        dueDate = dueDate,
+                        icon = icon,
+                        domain = domain,
+                        mve = mve,
+                        goal = goal,
+                    )
+                }
+                showAddDialog = false
+                editHabit = null
             },
         )
     }
@@ -243,7 +333,15 @@ private fun BalanceScreen(
     onHabitClick: (HabitListItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val domains = listOf("جسم", "ذهن", "روح", "حرفه", "روابط", "انضباط")
+    val domains =
+        listOf(
+            stringResource(Res.string.habits_domain_body),
+            stringResource(Res.string.habits_domain_mind),
+            stringResource(Res.string.habits_domain_spirit),
+            stringResource(Res.string.habits_domain_career),
+            stringResource(Res.string.habits_domain_relationships),
+            stringResource(Res.string.habits_domain_discipline),
+        )
     val primaryColor = MaterialTheme.colorScheme.primary
     var selectedDomain by remember { mutableStateOf<String?>(null) }
 
@@ -256,7 +354,7 @@ private fun BalanceScreen(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text("⚖️ توازن حوزه‌ها (Life Balance)", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(Res.string.habits_balance_title), style = MaterialTheme.typography.titleLarge)
             val domainChunks = domains.chunked(2)
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 domainChunks.forEach { rowDomains ->
@@ -322,14 +420,14 @@ private fun BalanceScreen(
             selectedDomain?.let { domain ->
                 val domainHabits = habits.filter { it.habit.domain == domain }
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text("عادت‌های حوزه $domain", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(Res.string.habits_domain_habits, domain), style = MaterialTheme.typography.titleMedium)
                     if (domainHabits.isEmpty()) {
-                        Text("عادتی در این حوزه ثبت نشده است.", style = MaterialTheme.typography.bodySmall)
+                        Text(stringResource(Res.string.habits_domain_empty), style = MaterialTheme.typography.bodySmall)
                     } else {
                         domainHabits.forEach { item ->
                             HabitCard(
                                 habitWithAnalytics = item.analytics,
-                                completed = item.completionLevel > 0,
+                                completionLevel = item.completionLevel,
                                 action = { /* Actions from balance screen could be restricted or enabled */ },
                                 onNavigateToAnalytics = { /* TODO */ },
                                 editState = false,
@@ -350,8 +448,10 @@ private fun BalanceScreen(
         if (recentEntries.isNotEmpty()) {
             val obstacleCounts =
                 recentEntries
-                    .filter { it.obstacle.isNotBlank() && it.obstacle != "بدون مانع" }
-                    .groupingBy { it.obstacle }
+                    .filter {
+                        it.obstacle.isNotBlank() && it.obstacle != "بدون مانع" &&
+                            it.obstacle != stringResource(Res.string.habits_no_obstacle)
+                    }.groupingBy { it.obstacle }
                     .eachCount()
                     .toList()
                     .sortedByDescending { it.second }
@@ -359,7 +459,7 @@ private fun BalanceScreen(
 
             if (obstacleCounts.isNotEmpty()) {
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Text("⚠️ موانع اصلی (Top Obstacles)", style = MaterialTheme.typography.titleLarge)
+                    Text(stringResource(Res.string.habits_top_obstacles), style = MaterialTheme.typography.titleLarge)
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
@@ -368,7 +468,7 @@ private fun BalanceScreen(
                             obstacleCounts.forEach { (obstacle, count) ->
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                     Text(obstacle, style = MaterialTheme.typography.bodyMedium)
-                                    Text("$count بار", style = MaterialTheme.typography.labelLarge)
+                                    Text(stringResource(Res.string.habits_times, count), style = MaterialTheme.typography.labelLarge)
                                 }
                             }
                         }
@@ -377,7 +477,7 @@ private fun BalanceScreen(
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text("🔋 نوسانات انرژی (Energy Fluctuation)", style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(Res.string.habits_energy_fluctuation), style = MaterialTheme.typography.titleLarge)
                 Card(
                     modifier = Modifier.fillMaxWidth().height(150.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
@@ -425,7 +525,7 @@ private fun BalanceScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            "“Kintsugi is not just about fixing; it's about making it stronger and more beautiful than before.”",
+            stringResource(Res.string.habits_kintsugi_quote),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             modifier = Modifier.padding(bottom = 32.dp),
@@ -441,8 +541,27 @@ private fun DailyReviewCard(
     onEnergyChange: (Int) -> Unit,
     onObstacleChange: (String) -> Unit,
     onNoteChange: (String) -> Unit,
+    recentEntries: List<com.kintsugi.app.data.local.LocalDailyEntry>,
 ) {
-    val obstacles = listOf("بدون مانع", "کم‌خوابی", "استرس", "محیط شلوغ", "بی‌برنامگی", "خستگی زیاد", "ناراحتی")
+    val defaultObstacles =
+        listOf(
+            stringResource(Res.string.habits_no_obstacle),
+            stringResource(Res.string.habits_obstacle_low_sleep),
+            stringResource(Res.string.habits_obstacle_stress),
+            stringResource(Res.string.habits_obstacle_noisy_place),
+            stringResource(Res.string.habits_obstacle_no_plan),
+            stringResource(Res.string.habits_obstacle_tired),
+            stringResource(Res.string.habits_obstacle_unwell),
+        )
+
+    val customObstacles =
+        recentEntries
+            .map { it.obstacle }
+            .filter { it.isNotBlank() && it !in defaultObstacles }
+            .distinct()
+
+    val allObstacles = defaultObstacles + customObstacles
+    var showCustomObstacleDialog by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -451,9 +570,13 @@ private fun DailyReviewCard(
         shape = MaterialTheme.shapes.large,
     ) {
         Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text("🌙 مرور روزانه (Daily Review)", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+            Text(
+                stringResource(Res.string.habits_daily_review_title),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary,
+            )
 
-            Text("سطح انرژی امروز:", style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(Res.string.habits_energy_today), style = MaterialTheme.typography.labelLarge)
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -484,13 +607,13 @@ private fun DailyReviewCard(
                 }
             }
 
-            Text("بزرگترین مانع امروز:", style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(Res.string.habits_obstacle_today), style = MaterialTheme.typography.labelLarge)
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                obstacles.forEach { o ->
+                allObstacles.forEach { o ->
                     val isSelected = obstacle == o
                     AssistChip(
                         onClick = { onObstacleChange(o) },
@@ -518,47 +641,118 @@ private fun DailyReviewCard(
                             },
                     )
                 }
+
+                AssistChip(
+                    onClick = { showCustomObstacleDialog = true },
+                    label = { Text("+", style = MaterialTheme.typography.labelMedium) },
+                    shape = MaterialTheme.shapes.medium,
+                    colors =
+                        AssistChipDefaults.assistChipColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        ),
+                )
             }
 
             OutlinedTextField(
                 value = note,
                 onValueChange = onNoteChange,
                 minLines = 2,
-                label = { Text("پیروزی اصلی / یادداشت روز") },
+                label = { Text(stringResource(Res.string.habits_note_label)) },
                 modifier = Modifier.fillMaxWidth(),
             )
         }
+    }
+
+    if (showCustomObstacleDialog) {
+        var customValue by remember { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { showCustomObstacleDialog = false },
+            title = { Text(stringResource(Res.string.habits_custom_obstacle)) },
+            text = {
+                OutlinedTextField(
+                    value = customValue,
+                    onValueChange = { customValue = it },
+                    singleLine = true,
+                    label = { Text(stringResource(Res.string.habits_name)) },
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        if (customValue.isNotBlank()) {
+                            onObstacleChange(customValue.trim())
+                        }
+                        showCustomObstacleDialog = false
+                    },
+                ) {
+                    Text(stringResource(Res.string.habits_add))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showCustomObstacleDialog = false }) {
+                    Text(stringResource(Res.string.main_cancel))
+                }
+            },
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddHabitDialog(
+    initialHabit: Habit? = null,
     onDismiss: () -> Unit,
     onConfirm: (String, String, Set<DayOfWeek>, Boolean, Int?, String, String, String, String) -> Unit,
 ) {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var selectedDays by remember { mutableStateOf(DayOfWeek.entries.toSet()) }
-    var isOneTime by remember { mutableStateOf(false) }
-    var icon by remember { mutableStateOf("") }
-    var domain by remember { mutableStateOf("جسم") }
-    var mve by remember { mutableStateOf("") }
-    var goal by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(initialHabit?.title ?: "") }
+    var description by remember { mutableStateOf(initialHabit?.description ?: "") }
+    var selectedDays by remember { mutableStateOf(initialHabit?.scheduledDays ?: DayOfWeek.entries.toSet()) }
+    var isOneTime by remember { mutableStateOf(initialHabit?.isOneTime ?: false) }
+    var icon by remember { mutableStateOf(initialHabit?.icon ?: "") }
+    var domain by remember { mutableStateOf(initialHabit?.domain ?: "") }
+    var mve by remember { mutableStateOf(initialHabit?.mve ?: "") }
+    var goal by remember { mutableStateOf(initialHabit?.goal ?: "") }
 
     val datePickerState =
         rememberDatePickerState(
-            initialSelectedDateMillis = Time.currentDateTime().toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
+            initialSelectedDateMillis =
+                initialHabit?.dueDate?.let { it * 24L * 3600L * 1000L }
+                    ?: Time.currentDateTime().toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
         )
     var showDatePicker by remember { mutableStateOf(false) }
 
-    val domains = listOf("جسم", "ذهن", "روح", "حرفه", "روابط", "انضباط")
+    val domains =
+        listOf(
+            stringResource(Res.string.habits_domain_body),
+            stringResource(Res.string.habits_domain_mind),
+            stringResource(Res.string.habits_domain_spirit),
+            stringResource(Res.string.habits_domain_career),
+            stringResource(Res.string.habits_domain_relationships),
+            stringResource(Res.string.habits_domain_discipline),
+        )
+
+    if (domain.isEmpty()) {
+        domain = domains.first()
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (isOneTime) "Add Task" else "Add Habit") },
+        title = {
+            Text(
+                if (initialHabit != null) {
+                    stringResource(Res.string.main_edit)
+                } else if (isOneTime) {
+                    stringResource(Res.string.habits_add_task)
+                } else {
+                    stringResource(Res.string.habits_add_habit)
+                },
+            )
+        },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -566,13 +760,13 @@ private fun AddHabitDialog(
                     Tab(
                         selected = !isOneTime,
                         onClick = { isOneTime = false },
-                        text = { Text("Habit") },
+                        text = { Text(stringResource(Res.string.habits_habit)) },
                         modifier = Modifier.weight(1f),
                     )
                     Tab(
                         selected = isOneTime,
                         onClick = { isOneTime = true },
-                        text = { Text("Task") },
+                        text = { Text(stringResource(Res.string.habits_task)) },
                         modifier = Modifier.weight(1f),
                     )
                 }
@@ -582,7 +776,7 @@ private fun AddHabitDialog(
                         value = icon,
                         onValueChange = { icon = it },
                         singleLine = true,
-                        label = { Text("Icon") },
+                        label = { Text(stringResource(Res.string.habits_icon)) },
                         modifier = Modifier.width(64.dp),
                         placeholder = { Text("🧘") },
                     )
@@ -590,13 +784,13 @@ private fun AddHabitDialog(
                         value = title,
                         onValueChange = { title = it },
                         singleLine = true,
-                        label = { Text("Name") },
+                        label = { Text(stringResource(Res.string.habits_name)) },
                         modifier = Modifier.weight(1f),
                     )
                 }
 
-                Text("Domain", style = MaterialTheme.typography.labelMedium)
-                Row(
+                Text(stringResource(Res.string.habits_domain), style = MaterialTheme.typography.labelMedium)
+                FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
@@ -624,7 +818,7 @@ private fun AddHabitDialog(
                     value = mve,
                     onValueChange = { mve = it },
                     singleLine = true,
-                    label = { Text("MVE (Minimum Effort)") },
+                    label = { Text(stringResource(Res.string.habits_mve_label)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
 
@@ -632,7 +826,7 @@ private fun AddHabitDialog(
                     value = goal,
                     onValueChange = { goal = it },
                     singleLine = true,
-                    label = { Text("Final Goal") },
+                    label = { Text(stringResource(Res.string.habits_goal_label)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
 
@@ -640,7 +834,7 @@ private fun AddHabitDialog(
                     value = description,
                     onValueChange = { description = it },
                     minLines = 2,
-                    label = { Text("Notes") },
+                    label = { Text(stringResource(Res.string.habits_notes)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
 
@@ -649,11 +843,11 @@ private fun AddHabitDialog(
                         val date =
                             datePickerState.selectedDateMillis?.let {
                                 Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.UTC).date
-                            } ?: "Select date"
-                        Text("Date: $date")
+                            } ?: stringResource(Res.string.habits_select_date)
+                        Text(stringResource(Res.string.habits_date, date.toString()))
                     }
                 } else {
-                    Text("Select days", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(Res.string.habits_select_days), style = MaterialTheme.typography.labelMedium)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -720,12 +914,12 @@ private fun AddHabitDialog(
                     onConfirm(title, description, selectedDays, isOneTime, dueDate, icon, domain, mve, goal)
                 },
             ) {
-                Text("Add")
+                Text(if (initialHabit != null) stringResource(Res.string.main_edit) else stringResource(Res.string.habits_add))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(Res.string.main_cancel))
             }
         },
     )

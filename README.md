@@ -105,13 +105,14 @@ iOS does not produce an APK-style artifact. Build and distribute the iOS app thr
 
 ### ✅ Planning and Tracking
 
-- ✅ Habit and one-time task management.
-- 🏷️ Custom labels with archive, duplicate, reorder, and color options.
-- ⏲️ Per-label timer profiles with custom durations and long-break behavior.
-- ✏️ Editable history and manual session creation.
-- 🗃️ Archived-label filtering.
-- 📅 Daily and weekly focus summaries.
-- 📈 Heatmaps, timelines, history charts, focus distribution, and focus/break ratio views.
+- ✅ **Habit and one-time task management.**
+- 🥇 **MVE vs Goal Tracking**: Each habit or task can be completed at two different levels (MVE or Goal). Long-press a card for explicit selection or quick-tap the circle icon to cycle through levels.
+- 🏷️ **Custom labels** with archive, duplicate, reorder, and color options.
+- ⏲️ **Per-label timer profiles** with custom durations and long-break behavior.
+- ✏️ **Editable history** and manual session creation.
+- 🗃️ **Archived-label filtering** with automatic unarchiving when reused.
+- 📅 **Daily and weekly focus summaries.**
+- 📈 **Heatmaps, timelines, history charts**, focus distribution, and focus/break ratio views.
 
 ### 🔐 Privacy, Backup, and Portability
 

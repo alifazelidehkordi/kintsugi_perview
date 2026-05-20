@@ -26,12 +26,33 @@ import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import kintsugi_productivity.composeapp.generated.resources.Res
+import kintsugi_productivity.composeapp.generated.resources.iransans
+import kintsugi_productivity.composeapp.generated.resources.iransans_black
+import kintsugi_productivity.composeapp.generated.resources.iransans_bold
+import kintsugi_productivity.composeapp.generated.resources.iransans_light
+import kintsugi_productivity.composeapp.generated.resources.iransans_medium
+import kintsugi_productivity.composeapp.generated.resources.iransans_ultralight
+import kintsugi_productivity.composeapp.generated.resources.language_code
 import kintsugi_productivity.composeapp.generated.resources.open_sans
 import kintsugi_productivity.composeapp.generated.resources.roboto_mono
 import org.jetbrains.compose.resources.Font
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun bodyFontFamily() = FontFamily(Font(Res.font.open_sans))
+fun bodyFontFamily(): FontFamily {
+    return if (stringResource(Res.string.language_code) == "fa") {
+        FontFamily(
+            Font(Res.font.iransans, FontWeight.Normal),
+            Font(Res.font.iransans_bold, FontWeight.Bold),
+            Font(Res.font.iransans_medium, FontWeight.Medium),
+            Font(Res.font.iransans_light, FontWeight.Light),
+            Font(Res.font.iransans_black, FontWeight.Black),
+            Font(Res.font.iransans_ultralight, FontWeight.ExtraLight),
+        )
+    } else {
+        FontFamily(Font(Res.font.open_sans))
+    }
+}
 
 val baseline = Typography()
 

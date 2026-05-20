@@ -40,6 +40,37 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kintsugi.app.ui.TopBar
+import kintsugi_productivity.composeapp.generated.resources.Res
+import kintsugi_productivity.composeapp.generated.resources.habits_count_times
+import kintsugi_productivity.composeapp.generated.resources.habits_dashboard_average_energy
+import kintsugi_productivity.composeapp.generated.resources.habits_dashboard_no_scheduled_today
+import kintsugi_productivity.composeapp.generated.resources.habits_dashboard_now
+import kintsugi_productivity.composeapp.generated.resources.habits_dashboard_slipping
+import kintsugi_productivity.composeapp.generated.resources.habits_dashboard_strongest_trend
+import kintsugi_productivity.composeapp.generated.resources.habits_dashboard_title
+import kintsugi_productivity.composeapp.generated.resources.habits_dashboard_today_focus
+import kintsugi_productivity.composeapp.generated.resources.habits_dashboard_top_obstacle
+import kintsugi_productivity.composeapp.generated.resources.habits_dashboard_weakest_domain
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_balance
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_body
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_career
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_discipline
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_mind
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_relationships
+import kintsugi_productivity.composeapp.generated.resources.habits_domain_spirit
+import kintsugi_productivity.composeapp.generated.resources.habits_energy_out_of_ten
+import kintsugi_productivity.composeapp.generated.resources.habits_no_major_obstacle
+import kintsugi_productivity.composeapp.generated.resources.habits_no_obstacle
+import kintsugi_productivity.composeapp.generated.resources.habits_not_enough_data
+import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_low_sleep
+import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_no_plan
+import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_noisy_place
+import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_stress
+import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_tired
+import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_unwell
+import kintsugi_productivity.composeapp.generated.resources.habits_streak_days
+import kintsugi_productivity.composeapp.generated.resources.habits_weekly_report
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +84,7 @@ fun HabitDashboardScreen(
     Scaffold(
         topBar = {
             TopBar(
-                title = "Kintsugi Dashboard",
+                title = stringResource(Res.string.habits_dashboard_title),
                 onNavigateBack = onNavigateBack,
             )
         },
@@ -80,16 +111,57 @@ fun HabitDashboardScreen(
                     .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            DashboardCard(title = "وضعیت همین حالا") {
-                MetricRow("تمرکز امروز", data.todayFocus?.habit?.title ?: "امروز عادتی برنامه‌ریزی نشده")
-                MetricRow("قوی‌ترین روند", data.strongestTrend?.toDashboardLabel() ?: "داده کافی نیست")
-                MetricRow("در معرض لغزش", data.slippingHabit?.toDashboardLabel() ?: "داده کافی نیست")
-                MetricRow("کم‌شارژترین حوزه", data.weakestDomain?.let { "${it.first} | ${it.second}%" } ?: "داده کافی نیست")
-                MetricRow("مانع غالب ۷ روز اخیر", data.topObstacle?.let { "${it.first} | ${it.second} بار" } ?: "بدون مانع جدی")
-                MetricRow("میانگین انرژی ۷ روز", data.averageEnergy?.let { "${it.formatOneDecimal()} از ۱۰" } ?: "داده کافی نیست")
+            val notEnoughData = stringResource(Res.string.habits_not_enough_data)
+            val strongestTrend = data.strongestTrend
+            val slippingHabit = data.slippingHabit
+            DashboardCard(title = stringResource(Res.string.habits_dashboard_now)) {
+                MetricRow(
+                    stringResource(Res.string.habits_dashboard_today_focus),
+                    data.todayFocus?.habit?.title ?: stringResource(Res.string.habits_dashboard_no_scheduled_today),
+                )
+                MetricRow(
+                    stringResource(Res.string.habits_dashboard_strongest_trend),
+                    strongestTrend?.toDashboardLabel(
+                        stringResource(
+                            Res.string.habits_streak_days,
+                            strongestTrend.currentStreak,
+                        ),
+                    )
+                        ?: notEnoughData,
+                )
+                MetricRow(
+                    stringResource(Res.string.habits_dashboard_slipping),
+                    slippingHabit?.toDashboardLabel(
+                        stringResource(
+                            Res.string.habits_streak_days,
+                            slippingHabit.currentStreak,
+                        ),
+                    )
+                        ?: notEnoughData,
+                )
+                MetricRow(
+                    stringResource(Res.string.habits_dashboard_weakest_domain),
+                    data.weakestDomain?.let { (domain, score) ->
+                        val domainLabel = domain.toLocalizedDomain()?.let { stringResource(it) } ?: domain
+                        "$domainLabel | $score%"
+                    } ?: notEnoughData,
+                )
+                MetricRow(
+                    stringResource(Res.string.habits_dashboard_top_obstacle),
+                    data.topObstacle?.let { (obstacle, count) ->
+                        val localizedObstacle = obstacle.toLocalizedObstacle()?.let { stringResource(it) } ?: obstacle
+                        stringResource(Res.string.habits_count_times, localizedObstacle, count)
+                    }
+                        ?: stringResource(Res.string.habits_no_major_obstacle),
+                )
+                MetricRow(
+                    stringResource(Res.string.habits_dashboard_average_energy),
+                    data.averageEnergy?.let { stringResource(Res.string.habits_energy_out_of_ten, it.formatOneDecimal()) }
+                        ?: notEnoughData,
+                )
             }
 
-            DashboardCard(title = "کارنامه هفتگی عادت‌ها") {
+            DashboardCard(title = stringResource(Res.string.habits_weekly_report)) {
                 data.weeklySummaries
                     .filter { it.scheduledTotal > 0 }
                     .sortedWith(compareBy<HabitPeriodSummary> { it.scorePercent ?: 0 }.thenBy { it.habit.title })
@@ -101,12 +173,13 @@ fun HabitDashboardScreen(
                     }
             }
 
-            DashboardCard(title = "توازن حوزه‌ها") {
+            DashboardCard(title = stringResource(Res.string.habits_domain_balance)) {
                 if (data.domainScores.isEmpty()) {
-                    Text("داده کافی نیست", style = MaterialTheme.typography.bodyMedium)
+                    Text(notEnoughData, style = MaterialTheme.typography.bodyMedium)
                 } else {
                     data.domainScores.toSortedMap().forEach { (domain, score) ->
-                        MetricRow(domain, "$score%")
+                        val domainLabel = domain.toLocalizedDomain()?.let { stringResource(it) } ?: domain
+                        MetricRow(domainLabel, "$score%")
                     }
                 }
             }
@@ -160,7 +233,7 @@ private fun MetricRow(
     }
 }
 
-private fun HabitPeriodSummary.toDashboardLabel(): String = "${habit.displayName()} | 🔥 $currentStreak روز"
+private fun HabitPeriodSummary.toDashboardLabel(streakLabel: String): String = "${habit.displayName()} | $streakLabel"
 
 private fun com.kintsugi.app.data.model.Habit.displayName(): String = if (icon.isBlank()) title else "$icon $title"
 
@@ -168,3 +241,26 @@ private fun Double.formatOneDecimal(): String {
     val rounded = (this * 10).toInt() / 10.0
     return rounded.toString()
 }
+
+private fun String.toLocalizedDomain(): org.jetbrains.compose.resources.StringResource? =
+    when (this.lowercase()) {
+        "body", "جسم" -> Res.string.habits_domain_body
+        "mind", "ذهن" -> Res.string.habits_domain_mind
+        "spirit", "روح" -> Res.string.habits_domain_spirit
+        "career", "حرفه" -> Res.string.habits_domain_career
+        "relationships", "روابط" -> Res.string.habits_domain_relationships
+        "discipline", "انضباط" -> Res.string.habits_domain_discipline
+        else -> null
+    }
+
+private fun String.toLocalizedObstacle(): org.jetbrains.compose.resources.StringResource? =
+    when (this.lowercase()) {
+        "no obstacle", "بدون مانع" -> Res.string.habits_no_obstacle
+        "low sleep", "کم‌خوابی" -> Res.string.habits_obstacle_low_sleep
+        "stress", "استرس" -> Res.string.habits_obstacle_stress
+        "noisy environment", "محیط شلوغ" -> Res.string.habits_obstacle_noisy_place
+        "no plan", "بی‌برنامگی" -> Res.string.habits_obstacle_no_plan
+        "very tired", "خستگی زیاد" -> Res.string.habits_obstacle_tired
+        "unwell", "ناراحتی" -> Res.string.habits_obstacle_unwell
+        else -> null
+    }

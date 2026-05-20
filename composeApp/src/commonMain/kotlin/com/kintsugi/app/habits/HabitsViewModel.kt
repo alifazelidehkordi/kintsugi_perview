@@ -207,27 +207,32 @@ class HabitsViewModel(
         }
     }
 
-    fun toggleCompletedToday(item: HabitListItem) {
+    fun updateHabitStatus(action: HabitsAction.InsertStatus) {
         viewModelScope.launch {
-            val today =
-                Time
-                    .currentDateTime()
-                    .date
-                    .toEpochDays()
-                    .toInt()
+            val dateEpochDays = action.date.toEpochDays().toInt()
+            val habitId = action.habit.id
 
-            val nextLevel = (item.completionLevel + 1) % 3
+            val currentStatus =
+                _uiState.value.habits
+                    .find { it.habit.id == habitId }
+                    ?.analytics
+                    ?.statuses
+                    ?.find { it.dateEpochDays == dateEpochDays }
+
+            val currentLevel = currentStatus?.level ?: 0
+            val nextLevel = action.level ?: ((currentLevel + 1) % 3)
 
             if (nextLevel == 0) {
-                repo.deleteHabitStatus(item.habit.id, today)
+                repo.deleteHabitStatus(habitId, dateEpochDays)
             } else {
-                // If it already exists, we might need an updateStatus method in repo,
-                // but since insertStatus is IGNORE/REPLACE, let's just delete and re-insert
-                // to be sure, or better, add updateStatus to repo if needed.
-                // Looking at HabitDao, insertStatus is IGNORE.
-                // Let's use delete then insert for simplicity in this cycle.
-                repo.deleteHabitStatus(item.habit.id, today)
-                repo.insertHabitStatus(HabitStatus(habitId = item.habit.id, dateEpochDays = today, level = nextLevel))
+                repo.deleteHabitStatus(habitId, dateEpochDays)
+                repo.insertHabitStatus(
+                    HabitStatus(
+                        habitId = habitId,
+                        dateEpochDays = dateEpochDays,
+                        level = nextLevel,
+                    ),
+                )
             }
         }
     }
@@ -251,6 +256,12 @@ class HabitsViewModel(
                 obstacle = obstacle ?: current?.obstacle ?: "",
                 note = note ?: current?.note ?: "",
             )
+        }
+    }
+
+    fun updateHabit(habit: Habit) {
+        viewModelScope.launch {
+            repo.updateHabit(habit)
         }
     }
 

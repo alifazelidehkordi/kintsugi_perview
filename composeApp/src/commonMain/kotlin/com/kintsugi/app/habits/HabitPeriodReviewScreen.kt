@@ -39,6 +39,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kintsugi.app.ui.TopBar
+import kintsugi_productivity.composeapp.generated.resources.Res
+import kintsugi_productivity.composeapp.generated.resources.habits_monthly_prompt_1
+import kintsugi_productivity.composeapp.generated.resources.habits_monthly_prompt_2
+import kintsugi_productivity.composeapp.generated.resources.habits_monthly_prompt_3
+import kintsugi_productivity.composeapp.generated.resources.habits_monthly_prompt_4
+import kintsugi_productivity.composeapp.generated.resources.habits_monthly_review_title
+import kintsugi_productivity.composeapp.generated.resources.habits_review_card_title
+import kintsugi_productivity.composeapp.generated.resources.habits_review_reflection_title
+import kintsugi_productivity.composeapp.generated.resources.habits_weekly_prompt_1
+import kintsugi_productivity.composeapp.generated.resources.habits_weekly_prompt_2
+import kintsugi_productivity.composeapp.generated.resources.habits_weekly_prompt_3
+import kintsugi_productivity.composeapp.generated.resources.habits_weekly_prompt_4
+import kintsugi_productivity.composeapp.generated.resources.habits_weekly_review_title
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -48,14 +62,14 @@ fun WeeklyHabitReviewScreen(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     HabitPeriodReviewScreen(
-        title = "Weekly Review",
+        title = stringResource(Res.string.habits_weekly_review_title),
         summaries = uiState.dashboardData.weeklySummaries,
         prompts =
             listOf(
-                "بزرگترین دستاورد این هفته چی بود؟",
-                "چه چیزی باعث شد در روزهای سخت زنجیره نشکند؟",
-                "کدام مانع بیشترین ضربه را به انضباط زد؟",
-                "هفته بعد چه تغییر کوچکی محیط را بهتر می‌کند؟",
+                stringResource(Res.string.habits_weekly_prompt_1),
+                stringResource(Res.string.habits_weekly_prompt_2),
+                stringResource(Res.string.habits_weekly_prompt_3),
+                stringResource(Res.string.habits_weekly_prompt_4),
             ),
         onNavigateBack = onNavigateBack,
         isLoading = uiState.isLoading,
@@ -69,14 +83,14 @@ fun MonthlyHabitReviewScreen(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     HabitPeriodReviewScreen(
-        title = "Monthly Review",
+        title = stringResource(Res.string.habits_monthly_review_title),
         summaries = uiState.dashboardData.monthlySummaries,
         prompts =
             listOf(
-                "کدام عادت بیشترین اثر را روی ماه گذاشت؟",
-                "کدام حوزه زندگی کم‌توجه ماند؟",
-                "الگوی انرژی این ماه چه چیزی نشان داد؟",
-                "ماه بعد کدام عادت باید ساده‌تر یا واضح‌تر شود؟",
+                stringResource(Res.string.habits_monthly_prompt_1),
+                stringResource(Res.string.habits_monthly_prompt_2),
+                stringResource(Res.string.habits_monthly_prompt_3),
+                stringResource(Res.string.habits_monthly_prompt_4),
             ),
         onNavigateBack = onNavigateBack,
         isLoading = uiState.isLoading,
@@ -129,7 +143,7 @@ private fun HabitPeriodReviewScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Text(
-                        text = "کارنامه عادت‌ها",
+                        text = stringResource(Res.string.habits_review_card_title),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -152,7 +166,7 @@ private fun HabitPeriodReviewScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     Text(
-                        text = "تأمل و طراحی",
+                        text = stringResource(Res.string.habits_review_reflection_title),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -170,12 +184,12 @@ private fun ReviewSummaryRow(summary: HabitPeriodSummary) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = if (summary.habit.icon.isBlank()) summary.habit.title else "${summary.habit.icon} ${summary.habit.title}",
+            text = summary.habit.title,
             modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+            style = MaterialTheme.typography.bodyMedium,
         )
         Text(
             text = "🥇 ${summary.gold} | 🥈 ${summary.silver} | ⚪ ${summary.missed} | ${summary.scorePercent ?: 0}%",

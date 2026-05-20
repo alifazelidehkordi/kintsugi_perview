@@ -17,6 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 <resources>
+    <string name="language_code" translatable="false">en</string>
     <string name="main_min" translatable="false">%1$smin</string>
     <string name="main_plus_1_min" translatable="false">+1 min</string>
     <string name="contact_address" translatable="false">kintsugi-app@googlegroups.com</string>

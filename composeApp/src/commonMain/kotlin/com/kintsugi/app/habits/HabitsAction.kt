@@ -36,6 +36,7 @@ sealed interface HabitsAction {
     data class InsertStatus(
         val habit: Habit,
         val date: LocalDate,
+        val level: Int? = null,
     ) : HabitsAction
 
     data class DeleteHabit(

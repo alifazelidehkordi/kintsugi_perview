@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Kintsugi Productivity
+    Copyright (C) 2025 Ali Fazeli
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<resources>
+    <string name="habits_title">Habits &amp; Tasks</string>
+    <string name="habits_tab_today">Today</string>
+    <string name="habits_tab_all">All</string>
+    <string name="habits_tab_balance">Balance</string>
+    <string name="habits_add">Add</string>
+    <string name="habits_empty_today">No tasks for today</string>
+    <string name="habits_empty_all">No habits yet</string>
+    <string name="habits_status_title">Log status</string>
+    <string name="habits_status_mve_title">Minimum effort (MVE)</string>
+    <string name="habits_status_mve_desc">I took one small step</string>
+    <string name="habits_status_goal_title">Full goal</string>
+    <string name="habits_status_goal_desc">I reached today's goal</string>
+    <string name="habits_status_clear">Clear</string>
+    <string name="habits_balance_title">Life Balance</string>
+    <string name="habits_domain_body">Body</string>
+    <string name="habits_domain_mind">Mind</string>
+    <string name="habits_domain_spirit">Spirit</string>
+    <string name="habits_domain_career">Career</string>
+    <string name="habits_domain_relationships">Relationships</string>
+    <string name="habits_domain_discipline">Discipline</string>
+    <string name="habits_domain_habits">Habits in %1$s</string>
+    <string name="habits_domain_empty">No habits have been added in this domain.</string>
+    <string name="habits_top_obstacles">Top Obstacles</string>
+    <string name="habits_energy_fluctuation">Energy Fluctuation</string>
+    <string name="habits_times">%1$d times</string>
+    <string name="habits_kintsugi_quote">Kintsugi is not just about fixing; it is about making it stronger and more beautiful than before.</string>
+    <string name="habits_daily_review_title">Daily Review</string>
+    <string name="habits_energy_today">Today&apos;s energy level</string>
+    <string name="habits_obstacle_today">Today&apos;s biggest obstacle</string>
+    <string name="habits_no_obstacle">No obstacle</string>
+    <string name="habits_obstacle_low_sleep">Low sleep</string>
+    <string name="habits_obstacle_stress">Stress</string>
+    <string name="habits_obstacle_noisy_place">Noisy environment</string>
+    <string name="habits_obstacle_no_plan">No plan</string>
+    <string name="habits_obstacle_tired">Very tired</string>
+    <string name="habits_obstacle_unwell">Unwell</string>
+    <string name="habits_custom_obstacle">Custom obstacle</string>
+    <string name="habits_add_obstacle">Add obstacle</string>
+    <string name="habits_note_label">Main win / daily note</string>
+    <string name="habits_add_task">Add Task</string>
+    <string name="habits_add_habit">Add Habit</string>
+    <string name="habits_habit">Habit</string>
+    <string name="habits_task">Task</string>
+    <string name="habits_icon">Icon</string>
+    <string name="habits_name">Name</string>
+    <string name="habits_domain">Domain</string>
+    <string name="habits_mve_label">MVE (Minimum Effort)</string>
+    <string name="habits_goal_label">Final Goal</string>
+    <string name="habits_notes">Notes</string>
+    <string name="habits_select_date">Select date</string>
+    <string name="habits_date">Date: %1$s</string>
+    <string name="habits_select_days">Select days</string>
+    <string name="habits_dashboard_title">Kintsugi Dashboard</string>
+    <string name="habits_dashboard_now">Right now</string>
+    <string name="habits_dashboard_today_focus">Today&apos;s focus</string>
+    <string name="habits_dashboard_no_scheduled_today">No habit scheduled today</string>
+    <string name="habits_dashboard_strongest_trend">Strongest trend</string>
+    <string name="habits_dashboard_slipping">At risk of slipping</string>
+    <string name="habits_dashboard_weakest_domain">Lowest-charge domain</string>
+    <string name="habits_dashboard_top_obstacle">Top obstacle in the last 7 days</string>
+    <string name="habits_dashboard_average_energy">7-day average energy</string>
+    <string name="habits_not_enough_data">Not enough data</string>
+    <string name="habits_no_major_obstacle">No major obstacle</string>
+    <string name="habits_count_times">%1$s | %2$d times</string>
+    <string name="habits_energy_out_of_ten">%1$s out of 10</string>
+    <string name="habits_weekly_report">Weekly habit report</string>
+    <string name="habits_domain_balance">Domain balance</string>
+    <string name="habits_streak_days">%1$d days</string>
+    <string name="habits_weekly_review_title">Weekly Review</string>
+    <string name="habits_monthly_review_title">Monthly Review</string>
+    <string name="habits_review_card_title">Habit report</string>
+    <string name="habits_review_reflection_title">Reflect and design</string>
+    <string name="habits_weekly_prompt_1">What was the biggest achievement this week?</string>
+    <string name="habits_weekly_prompt_2">What helped the streak survive on hard days?</string>
+    <string name="habits_weekly_prompt_3">Which obstacle hit discipline the hardest?</string>
+    <string name="habits_weekly_prompt_4">What small change will improve the environment next week?</string>
+    <string name="habits_monthly_prompt_1">Which habit had the biggest impact this month?</string>
+    <string name="habits_monthly_prompt_2">Which life domain was neglected?</string>
+    <string name="habits_monthly_prompt_3">What did this month&apos;s energy pattern show?</string>
+    <string name="habits_monthly_prompt_4">Which habit should become simpler or clearer next month?</string>
+</resources>

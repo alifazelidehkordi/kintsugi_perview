@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Kintsugi Productivity
+    Copyright (C) 2025 Ali Fazeli
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<resources>
+    <string name="habits_title">عادت‌ها و کارها</string>
+    <string name="habits_tab_today">امروز</string>
+    <string name="habits_tab_all">همه</string>
+    <string name="habits_tab_balance">توازن</string>
+    <string name="habits_add">افزودن</string>
+    <string name="habits_empty_today">برای امروز کاری ثبت نشده است</string>
+    <string name="habits_empty_all">هنوز عادتی ثبت نشده است</string>
+    <string name="habits_status_title">ثبت وضعیت</string>
+    <string name="habits_status_mve_title">حداقل تلاش (MVE)</string>
+    <string name="habits_status_mve_desc">یک قدم کوچک برداشتم</string>
+    <string name="habits_status_goal_title">هدف کامل</string>
+    <string name="habits_status_goal_desc">به هدف امروز رسیدم</string>
+    <string name="habits_status_clear">پاک کردن</string>
+    <string name="habits_balance_title">توازن حوزه‌ها</string>
+    <string name="habits_domain_body">جسم</string>
+    <string name="habits_domain_mind">ذهن</string>
+    <string name="habits_domain_spirit">روح</string>
+    <string name="habits_domain_career">حرفه</string>
+    <string name="habits_domain_relationships">روابط</string>
+    <string name="habits_domain_discipline">انضباط</string>
+    <string name="habits_domain_habits">عادت‌های حوزه %1$s</string>
+    <string name="habits_domain_empty">عادتی در این حوزه ثبت نشده است.</string>
+    <string name="habits_top_obstacles">موانع اصلی</string>
+    <string name="habits_energy_fluctuation">نوسانات انرژی</string>
+    <string name="habits_times">%1$d بار</string>
+    <string name="habits_kintsugi_quote">کینتسوگی فقط ترمیم نیست؛ قوی‌تر و زیباتر ساختنِ چیزی است که شکسته بود.</string>
+    <string name="habits_daily_review_title">مرور روزانه</string>
+    <string name="habits_energy_today">سطح انرژی امروز</string>
+    <string name="habits_obstacle_today">بزرگ‌ترین مانع امروز</string>
+    <string name="habits_no_obstacle">بدون مانع</string>
+    <string name="habits_obstacle_low_sleep">کم‌خوابی</string>
+    <string name="habits_obstacle_stress">استرس</string>
+    <string name="habits_obstacle_noisy_place">محیط شلوغ</string>
+    <string name="habits_obstacle_no_plan">بی‌برنامگی</string>
+    <string name="habits_obstacle_tired">خستگی زیاد</string>
+    <string name="habits_obstacle_unwell">ناراحتی</string>
+    <string name="habits_custom_obstacle">مانع سفارشی</string>
+    <string name="habits_add_obstacle">افزودن مانع</string>
+    <string name="habits_note_label">پیروزی اصلی / یادداشت روز</string>
+    <string name="habits_add_task">افزودن کار</string>
+    <string name="habits_add_habit">افزودن عادت</string>
+    <string name="habits_habit">عادت</string>
+    <string name="habits_task">کار</string>
+    <string name="habits_icon">آیکن</string>
+    <string name="habits_name">نام</string>
+    <string name="habits_domain">حوزه</string>
+    <string name="habits_mve_label">حداقل تلاش (MVE)</string>
+    <string name="habits_goal_label">هدف نهایی</string>
+    <string name="habits_notes">یادداشت‌ها</string>
+    <string name="habits_select_date">انتخاب تاریخ</string>
+    <string name="habits_date">تاریخ: %1$s</string>
+    <string name="habits_select_days">انتخاب روزها</string>
+    <string name="habits_dashboard_title">داشبورد کینتسوگی</string>
+    <string name="habits_dashboard_now">وضعیت همین حالا</string>
+    <string name="habits_dashboard_today_focus">تمرکز امروز</string>
+    <string name="habits_dashboard_no_scheduled_today">امروز عادتی برنامه‌ریزی نشده است</string>
+    <string name="habits_dashboard_strongest_trend">قوی‌ترین روند</string>
+    <string name="habits_dashboard_slipping">در معرض لغزش</string>
+    <string name="habits_dashboard_weakest_domain">کم‌شارژترین حوزه</string>
+    <string name="habits_dashboard_top_obstacle">مانع غالب ۷ روز اخیر</string>
+    <string name="habits_dashboard_average_energy">میانگین انرژی ۷ روز</string>
+    <string name="habits_not_enough_data">داده کافی نیست</string>
+    <string name="habits_no_major_obstacle">بدون مانع جدی</string>
+    <string name="habits_count_times">%1$s | %2$d بار</string>
+    <string name="habits_energy_out_of_ten">%1$s از ۱۰</string>
+    <string name="habits_weekly_report">کارنامه هفتگی عادت‌ها</string>
+    <string name="habits_domain_balance">توازن حوزه‌ها</string>
+    <string name="habits_streak_days">%1$d روز</string>
+    <string name="habits_weekly_review_title">مرور هفتگی</string>
+    <string name="habits_monthly_review_title">مرور ماهانه</string>
+    <string name="habits_review_card_title">کارنامه عادت‌ها</string>
+    <string name="habits_review_reflection_title">تأمل و طراحی</string>
+    <string name="habits_weekly_prompt_1">بزرگ‌ترین دستاورد این هفته چه بود؟</string>
+    <string name="habits_weekly_prompt_2">چه چیزی باعث شد در روزهای سخت زنجیره نشکند؟</string>
+    <string name="habits_weekly_prompt_3">کدام مانع بیشترین ضربه را به انضباط زد؟</string>
+    <string name="habits_weekly_prompt_4">هفته بعد چه تغییر کوچکی محیط را بهتر می‌کند؟</string>
+    <string name="habits_monthly_prompt_1">کدام عادت بیشترین اثر را روی ماه گذاشت؟</string>
+    <string name="habits_monthly_prompt_2">کدام حوزه زندگی کم‌توجه ماند؟</string>
+    <string name="habits_monthly_prompt_3">الگوی انرژی این ماه چه چیزی نشان داد؟</string>
+    <string name="habits_monthly_prompt_4">ماه بعد کدام عادت باید ساده‌تر یا واضح‌تر شود؟</string>
+</resources>
