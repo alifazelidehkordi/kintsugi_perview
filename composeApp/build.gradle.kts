@@ -190,8 +190,8 @@ android {
 
     signingConfigs {
         getByName("debug") {
-            v1SigningEnabled = true
-            v2SigningEnabled = true
+            isV1SigningEnabled = true
+            isV2SigningEnabled = true
         }
     }
 
