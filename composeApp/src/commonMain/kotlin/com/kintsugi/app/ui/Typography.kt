@@ -39,8 +39,8 @@ import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun bodyFontFamily(): FontFamily {
-    return if (stringResource(Res.string.language_code) == "fa") {
+fun bodyFontFamily(): FontFamily =
+    if (stringResource(Res.string.language_code) == "fa") {
         FontFamily(
             Font(Res.font.iransans, FontWeight.Normal),
             Font(Res.font.iransans_bold, FontWeight.Bold),
@@ -52,7 +52,6 @@ fun bodyFontFamily(): FontFamily {
     } else {
         FontFamily(Font(Res.font.open_sans))
     }
-}
 
 val baseline = Typography()
 
