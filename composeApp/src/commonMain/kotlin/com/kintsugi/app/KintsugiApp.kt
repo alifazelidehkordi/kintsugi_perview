@@ -49,8 +49,6 @@ import com.kintsugi.app.bl.TimerForegroundMonitor
 import com.kintsugi.app.data.settings.ThemePreference
 import com.kintsugi.app.habits.HabitDashboardScreen
 import com.kintsugi.app.habits.HabitsScreen
-import com.kintsugi.app.habits.MonthlyHabitReviewScreen
-import com.kintsugi.app.habits.WeeklyHabitReviewScreen
 import com.kintsugi.app.labels.addedit.AddEditLabelScreen
 import com.kintsugi.app.labels.archived.ArchivedLabelsScreen
 import com.kintsugi.app.labels.main.LabelsScreen
@@ -65,7 +63,6 @@ import com.kintsugi.app.main.LabelsDest
 import com.kintsugi.app.main.LicensesDest
 import com.kintsugi.app.main.MainDest
 import com.kintsugi.app.main.MainScreen
-import com.kintsugi.app.main.MonthlyHabitReviewDest
 import com.kintsugi.app.main.NotificationSettingsDest
 import com.kintsugi.app.main.OnboardingDest
 import com.kintsugi.app.main.ProDest
@@ -73,7 +70,6 @@ import com.kintsugi.app.main.SettingsDest
 import com.kintsugi.app.main.StatsDest
 import com.kintsugi.app.main.TimerDurationsDest
 import com.kintsugi.app.main.UserInterfaceDest
-import com.kintsugi.app.main.WeeklyHabitReviewDest
 import com.kintsugi.app.main.route
 import com.kintsugi.app.onboarding.MainViewModel
 import com.kintsugi.app.onboarding.OnboardingScreen
@@ -295,16 +291,7 @@ fun KintsugiApp(
                             onNavigateBack = navController::popBackStack2,
                         )
                     }
-                    composable<WeeklyHabitReviewDest> {
-                        WeeklyHabitReviewScreen(
-                            onNavigateBack = navController::popBackStack2,
-                        )
-                    }
-                    composable<MonthlyHabitReviewDest> {
-                        MonthlyHabitReviewScreen(
-                            onNavigateBack = navController::popBackStack2,
-                        )
-                    }
+
                     composable<AddEditLabelDest> {
                         val addEditLabelDest = it.toRoute<AddEditLabelDest>()
                         AddEditLabelScreen(

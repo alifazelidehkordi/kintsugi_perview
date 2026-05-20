@@ -56,9 +56,7 @@ import kintsugi_productivity.composeapp.generated.resources.Res
 import kintsugi_productivity.composeapp.generated.resources.about_and_feedback_title
 import kintsugi_productivity.composeapp.generated.resources.backup_and_restore_title
 import kintsugi_productivity.composeapp.generated.resources.habits_dashboard_title
-import kintsugi_productivity.composeapp.generated.resources.habits_monthly_review_title
 import kintsugi_productivity.composeapp.generated.resources.habits_title
-import kintsugi_productivity.composeapp.generated.resources.habits_weekly_review_title
 import kintsugi_productivity.composeapp.generated.resources.labels_title
 import kintsugi_productivity.composeapp.generated.resources.product_name_long
 import kintsugi_productivity.composeapp.generated.resources.settings_title
@@ -103,14 +101,6 @@ fun MainNavigationSheet(
                 navController.navigate(HabitDashboardDest)
                 onHideSheet()
             },
-            navigateToWeeklyReview = {
-                navController.navigate(WeeklyHabitReviewDest)
-                onHideSheet()
-            },
-            navigateToMonthlyReview = {
-                navController.navigate(MonthlyHabitReviewDest)
-                onHideSheet()
-            },
             navigateToStats = {
                 navController.navigate(StatsDest)
                 onHideSheet()
@@ -146,8 +136,6 @@ fun MainNavigationSheetContent(
     navigateToLabels: () -> Unit,
     navigateToHabits: () -> Unit,
     navigateToHabitDashboard: () -> Unit,
-    navigateToWeeklyReview: () -> Unit,
-    navigateToMonthlyReview: () -> Unit,
     navigateToStats: () -> Unit,
     navigateToSettings: () -> Unit,
     navigateToBackup: () -> Unit,
@@ -214,28 +202,6 @@ fun MainNavigationSheetContent(
                 )
             },
             onClick = navigateToHabitDashboard,
-        )
-
-        IconTextButton(
-            title = stringResource(Res.string.habits_weekly_review_title),
-            icon = {
-                Icon(
-                    imageVector = Icons.Outlined.CheckCircle,
-                    contentDescription = stringResource(Res.string.habits_weekly_review_title),
-                )
-            },
-            onClick = navigateToWeeklyReview,
-        )
-
-        IconTextButton(
-            title = stringResource(Res.string.habits_monthly_review_title),
-            icon = {
-                Icon(
-                    imageVector = EvaIcons.Outline.PieChart,
-                    contentDescription = stringResource(Res.string.habits_monthly_review_title),
-                )
-            },
-            onClick = navigateToMonthlyReview,
         )
 
         IconTextButton(

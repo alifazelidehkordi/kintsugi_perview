@@ -38,12 +38,6 @@ data object HabitsDest
 data object HabitDashboardDest
 
 @Serializable
-data object WeeklyHabitReviewDest
-
-@Serializable
-data object MonthlyHabitReviewDest
-
-@Serializable
 data class AddEditLabelDest(
     val name: String,
 )

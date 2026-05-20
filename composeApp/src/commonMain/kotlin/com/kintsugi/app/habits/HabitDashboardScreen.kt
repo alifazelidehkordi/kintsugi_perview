@@ -21,8 +21,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -70,6 +72,17 @@ import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_tire
 import kintsugi_productivity.composeapp.generated.resources.habits_obstacle_unwell
 import kintsugi_productivity.composeapp.generated.resources.habits_streak_days
 import kintsugi_productivity.composeapp.generated.resources.habits_weekly_report
+import kintsugi_productivity.composeapp.generated.resources.habits_weekly_review_title
+import kintsugi_productivity.composeapp.generated.resources.habits_monthly_review_title
+import kintsugi_productivity.composeapp.generated.resources.habits_review_reflection_title
+import kintsugi_productivity.composeapp.generated.resources.habits_weekly_prompt_1
+import kintsugi_productivity.composeapp.generated.resources.habits_weekly_prompt_2
+import kintsugi_productivity.composeapp.generated.resources.habits_weekly_prompt_3
+import kintsugi_productivity.composeapp.generated.resources.habits_weekly_prompt_4
+import kintsugi_productivity.composeapp.generated.resources.habits_monthly_prompt_1
+import kintsugi_productivity.composeapp.generated.resources.habits_monthly_prompt_2
+import kintsugi_productivity.composeapp.generated.resources.habits_monthly_prompt_3
+import kintsugi_productivity.composeapp.generated.resources.habits_monthly_prompt_4
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -162,22 +175,74 @@ fun HabitDashboardScreen(
             }
 
             DashboardCard(title = stringResource(Res.string.habits_weekly_report)) {
-                data.weeklySummaries
-                    .filter { it.scheduledTotal > 0 }
-                    .sortedWith(compareBy<HabitPeriodSummary> { it.scorePercent ?: 0 }.thenBy { it.habit.title })
-                    .forEach { summary ->
-                        MetricRow(
-                            label = summary.habit.displayName(),
-                            value = "🥇 ${summary.gold} | 🥈 ${summary.silver} | ${summary.scorePercent ?: 0}%",
-                        )
-                    }
+                val weeklyActive = data.weeklySummaries.filter { it.scheduledTotal > 0 }
+                if (weeklyActive.isEmpty()) {
+                    Text(notEnoughData, style = MaterialTheme.typography.bodyMedium)
+                } else {
+                    weeklyActive
+                        .sortedWith(compareByDescending<HabitPeriodSummary> { it.scorePercent ?: 0 }.thenBy { it.habit.title })
+                        .forEach { summary ->
+                            MetricRow(
+                                label = summary.habit.displayName(),
+                                value = "🥇 ${summary.gold} | 🥈 ${summary.silver} | ⚪ ${summary.missed} | ${summary.scorePercent ?: 0}%",
+                            )
+                        }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = stringResource(Res.string.habits_review_reflection_title),
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+                val weeklyPrompts = listOf(
+                    stringResource(Res.string.habits_weekly_prompt_1),
+                    stringResource(Res.string.habits_weekly_prompt_2),
+                    stringResource(Res.string.habits_weekly_prompt_3),
+                    stringResource(Res.string.habits_weekly_prompt_4),
+                )
+                weeklyPrompts.forEach { prompt ->
+                    Text("• $prompt", style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+
+            DashboardCard(title = stringResource(Res.string.habits_monthly_review_title)) {
+                val monthlyActive = data.monthlySummaries.filter { it.scheduledTotal > 0 }
+                if (monthlyActive.isEmpty()) {
+                    Text(notEnoughData, style = MaterialTheme.typography.bodyMedium)
+                } else {
+                    monthlyActive
+                        .sortedWith(compareByDescending<HabitPeriodSummary> { it.scorePercent ?: 0 }.thenBy { it.habit.title })
+                        .forEach { summary ->
+                            MetricRow(
+                                label = summary.habit.displayName(),
+                                value = "🥇 ${summary.gold} | 🥈 ${summary.silver} | ⚪ ${summary.missed} | ${summary.scorePercent ?: 0}%",
+                            )
+                        }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = stringResource(Res.string.habits_review_reflection_title),
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+                val monthlyPrompts = listOf(
+                    stringResource(Res.string.habits_monthly_prompt_1),
+                    stringResource(Res.string.habits_monthly_prompt_2),
+                    stringResource(Res.string.habits_monthly_prompt_3),
+                    stringResource(Res.string.habits_monthly_prompt_4),
+                )
+                monthlyPrompts.forEach { prompt ->
+                    Text("• $prompt", style = MaterialTheme.typography.bodyMedium)
+                }
             }
 
             DashboardCard(title = stringResource(Res.string.habits_domain_balance)) {
                 if (data.domainScores.isEmpty()) {
                     Text(notEnoughData, style = MaterialTheme.typography.bodyMedium)
                 } else {
-                    data.domainScores.toSortedMap().forEach { (domain, score) ->
+                    data.domainScores.toList().sortedBy { it.first }.forEach { (domain, score) ->
                         val domainLabel = domain.toLocalizedDomain()?.let { stringResource(it) } ?: domain
                         MetricRow(domainLabel, "$score%")
                     }
