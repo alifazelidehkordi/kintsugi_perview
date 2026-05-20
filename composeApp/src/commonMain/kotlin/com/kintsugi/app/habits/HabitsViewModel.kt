@@ -271,6 +271,12 @@ class HabitsViewModel(
         }
     }
 
+    fun deleteHabit(habit: Habit) {
+        viewModelScope.launch {
+            repo.deleteHabit(habit.id)
+        }
+    }
+
     fun activateLabelForHabit(habit: Habit) {
         viewModelScope.launch {
             settingsRepository.activateLabelWithName(habit.labelName)

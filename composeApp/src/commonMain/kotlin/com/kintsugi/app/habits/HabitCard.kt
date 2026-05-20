@@ -39,6 +39,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -78,6 +79,7 @@ import kintsugi_productivity.composeapp.generated.resources.habits_status_goal_t
 import kintsugi_productivity.composeapp.generated.resources.habits_status_mve_desc
 import kintsugi_productivity.composeapp.generated.resources.habits_status_mve_title
 import kintsugi_productivity.composeapp.generated.resources.heat
+import kintsugi_productivity.composeapp.generated.resources.main_delete
 import kintsugi_productivity.composeapp.generated.resources.main_edit
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
@@ -103,6 +105,7 @@ fun HabitCard(
     reorderHandle: @Composable () -> Unit,
     is24Hr: Boolean,
     shape: Shape,
+    onNameClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val completed = completionLevel > 0
@@ -201,7 +204,10 @@ fun HabitCard(
                         text = habitWithAnalytics.habit.title,
                         maxLines = 1,
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                        modifier = Modifier.basicMarquee(),
+                        modifier =
+                            Modifier
+                                .basicMarquee()
+                                .clickable { onNameClick() },
                     )
                 },
                 supportingContent = {
@@ -390,6 +396,14 @@ fun HabitCard(
                 leadingIcon = { Icon(Icons.Outlined.Edit, null) },
                 onClick = {
                     action(HabitsAction.UpdateHabit(habitWithAnalytics.habit))
+                    showMenu = false
+                },
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(Res.string.main_delete)) },
+                leadingIcon = { Icon(Icons.Outlined.Delete, null) },
+                onClick = {
+                    action(HabitsAction.DeleteHabit(habitWithAnalytics.habit))
                     showMenu = false
                 },
             )

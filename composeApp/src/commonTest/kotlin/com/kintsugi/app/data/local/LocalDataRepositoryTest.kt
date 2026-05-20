@@ -453,6 +453,59 @@ class LocalDataRepositoryTest : RoomDatabaseTest() {
             repo.deleteLabel(labelName)
         }
 
+    @Test
+    fun testDeleteHabitPermanently() =
+        runTest {
+            val labelName = "Gym"
+            val newLabel =
+                Label(
+                    name = labelName,
+                    colorIndex = 1,
+                    orderIndex = 10,
+                    isArchived = false,
+                    timerProfile = TimerProfile(),
+                )
+            val newHabit =
+                Habit(
+                    id = 0,
+                    title = "Go to gym",
+                    description = "Every day",
+                    labelName = labelName,
+                    scheduledDays = emptySet(),
+                    time = null,
+                    orderIndex = 0,
+                    reminder = false,
+                    isArchived = false,
+                    isOneTime = false,
+                    dueDate = null,
+                    icon = "",
+                    domain = "جسم",
+                    mve = "",
+                    goal = "",
+                )
+
+            // Insert habit and label
+            val habitId = repo.insertHabitWithLabel(newHabit, newLabel)
+
+            // Verify active habits contains this habit
+            var activeHabits = repo.selectActiveHabits().first()
+            assertTrue(activeHabits.any { it.id == habitId })
+
+            // Delete the habit
+            repo.deleteHabit(habitId)
+
+            // Verify active habits does NOT contain this habit anymore
+            activeHabits = repo.selectActiveHabits().first()
+            assertTrue(activeHabits.none { it.id == habitId })
+
+            // Verify all habits does NOT contain this habit anymore
+            val allHabits = repo.selectAllHabits().first()
+            assertTrue(allHabits.none { it.id == habitId })
+
+            // Clean up
+            repo.deleteLabel(labelName)
+        }
+
     companion object {
         private const val LABEL_NAME = "label_name"
         private var label =

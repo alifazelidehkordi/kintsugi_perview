@@ -97,4 +97,6 @@
     <string name="habits_monthly_prompt_2">کدام حوزه زندگی کم‌توجه ماند؟</string>
     <string name="habits_monthly_prompt_3">الگوی انرژی این ماه چه چیزی نشان داد؟</string>
     <string name="habits_monthly_prompt_4">ماه بعد کدام عادت باید ساده‌تر یا واضح‌تر شود؟</string>
+    <string name="habits_delete_confirmation_title">حذف عادت</string>
+    <string name="habits_delete_confirmation_desc">آیا از حذف این عادت مطمئن هستید؟</string>
 </resources>

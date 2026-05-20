@@ -75,6 +75,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kintsugi.app.common.Time
 import com.kintsugi.app.data.model.Habit
 import com.kintsugi.app.data.model.HabitStatus
+import com.kintsugi.app.ui.ConfirmationDialog
 import com.kintsugi.app.ui.DatePickerDialog
 import com.kintsugi.app.ui.TopBar
 import compose.icons.EvaIcons
@@ -90,6 +91,8 @@ import kintsugi_productivity.composeapp.generated.resources.habits_balance_title
 import kintsugi_productivity.composeapp.generated.resources.habits_custom_obstacle
 import kintsugi_productivity.composeapp.generated.resources.habits_daily_review_title
 import kintsugi_productivity.composeapp.generated.resources.habits_date
+import kintsugi_productivity.composeapp.generated.resources.habits_delete_confirmation_desc
+import kintsugi_productivity.composeapp.generated.resources.habits_delete_confirmation_title
 import kintsugi_productivity.composeapp.generated.resources.habits_domain
 import kintsugi_productivity.composeapp.generated.resources.habits_domain_body
 import kintsugi_productivity.composeapp.generated.resources.habits_domain_career
@@ -129,6 +132,7 @@ import kintsugi_productivity.composeapp.generated.resources.habits_times
 import kintsugi_productivity.composeapp.generated.resources.habits_title
 import kintsugi_productivity.composeapp.generated.resources.habits_top_obstacles
 import kintsugi_productivity.composeapp.generated.resources.main_cancel
+import kintsugi_productivity.composeapp.generated.resources.main_delete
 import kintsugi_productivity.composeapp.generated.resources.main_edit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Instant
@@ -151,6 +155,7 @@ fun HabitsScreen(
 
     var showAddDialog by remember { mutableStateOf(false) }
     var editHabit by remember { mutableStateOf<Habit?>(null) }
+    var habitToDelete by remember { mutableStateOf<Habit?>(null) }
     var selectedTab by remember { mutableStateOf(0) }
 
     Scaffold(
@@ -245,6 +250,9 @@ fun HabitsScreen(
                             when (action) {
                                 is HabitsAction.InsertStatus -> viewModel.updateHabitStatus(action)
                                 is HabitsAction.ArchiveHabit -> viewModel.archiveHabit(action.habit)
+                                is HabitsAction.DeleteHabit -> {
+                                    habitToDelete = action.habit
+                                }
                                 is HabitsAction.UpdateHabit -> {
                                     editHabit = action.habit
                                     showAddDialog = true
@@ -253,6 +261,10 @@ fun HabitsScreen(
                             }
                         },
                         onNavigateToAnalytics = { /* TODO */ },
+                        onNameClick = {
+                            viewModel.activateLabelForHabit(item.habit)
+                            onNavigateToTimer()
+                        },
                         editState = false,
                         compactView = false,
                         analyticsEnabled = !item.habit.isOneTime,
@@ -260,11 +272,7 @@ fun HabitsScreen(
                         reorderHandle = {},
                         is24Hr = true,
                         shape = MaterialTheme.shapes.medium,
-                        modifier =
-                            Modifier.fillMaxWidth().clickable {
-                                viewModel.activateLabelForHabit(item.habit)
-                                onNavigateToTimer()
-                            },
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
 
@@ -324,6 +332,20 @@ fun HabitsScreen(
                 }
                 showAddDialog = false
                 editHabit = null
+            },
+        )
+    }
+
+    habitToDelete?.let { habit ->
+        ConfirmationDialog(
+            title = stringResource(Res.string.habits_delete_confirmation_title),
+            subtitle = stringResource(Res.string.habits_delete_confirmation_desc),
+            onConfirm = {
+                viewModel.deleteHabit(habit)
+                habitToDelete = null
+            },
+            onDismiss = {
+                habitToDelete = null
             },
         )
     }
@@ -434,6 +456,9 @@ private fun BalanceScreen(
                                 completionLevel = item.completionLevel,
                                 action = { /* Actions from balance screen could be restricted or enabled */ },
                                 onNavigateToAnalytics = { /* TODO */ },
+                                onNameClick = {
+                                    onHabitClick(item)
+                                },
                                 editState = false,
                                 compactView = true,
                                 analyticsEnabled = true,
@@ -441,7 +466,7 @@ private fun BalanceScreen(
                                 reorderHandle = {},
                                 is24Hr = true,
                                 shape = MaterialTheme.shapes.medium,
-                                modifier = Modifier.fillMaxWidth().clickable { onHabitClick(item) },
+                                modifier = Modifier.fillMaxWidth(),
                             )
                         }
                     }
