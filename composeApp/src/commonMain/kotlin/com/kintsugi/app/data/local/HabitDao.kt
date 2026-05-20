@@ -72,7 +72,14 @@ interface HabitDao {
         isArchived: Boolean,
     )
 
-    @Query("SELECT * FROM localHabit WHERE isArchived = 0 ORDER BY orderIndex, title")
+    @Query(
+        """
+        SELECT h.* FROM localHabit h
+        INNER JOIN localLabel l ON h.labelName = l.name
+        WHERE h.isArchived = 0 AND l.isArchived = 0
+        ORDER BY h.orderIndex, h.title
+        """,
+    )
     fun selectActiveHabits(): Flow<List<LocalHabit>>
 
     @Query("SELECT * FROM localHabit ORDER BY isArchived, orderIndex, title")
@@ -83,6 +90,15 @@ interface HabitDao {
 
     @Query("DELETE FROM localHabit WHERE id = :habitId")
     suspend fun deleteHabit(habitId: Long)
+
+    @Query("UPDATE localHabit SET isArchived = :isArchived WHERE labelName = :labelName")
+    suspend fun updateHabitArchivedByLabel(
+        labelName: String,
+        isArchived: Boolean,
+    )
+
+    @Query("UPDATE localHabit SET isArchived = 1 WHERE labelName != 'PRODUCTIVITY_DEFAULT_LABEL'")
+    suspend fun archiveAllButDefaultHabits()
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertStatus(status: LocalHabitStatus): Long

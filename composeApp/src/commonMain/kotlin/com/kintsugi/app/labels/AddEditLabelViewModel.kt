@@ -47,12 +47,22 @@ val AddEditLabelUiState.existingLabelNames: List<String>
 
 fun AddEditLabelUiState.labelNameIsValid(): Boolean {
     val name = tmpLabel.name.trim()
-    return name.isNotEmpty() &&
-        !existingLabelNames
-            .map { labels -> labels.lowercase() }
-            .minus(labelToEdit?.name?.lowercase())
-            .contains(name.lowercase()) &&
-        name.lowercase() != defaultLabelDisplayName.lowercase()
+    if (name.isEmpty()) return false
+    if (name.lowercase() == defaultLabelDisplayName.lowercase()) return false
+
+    val nameList =
+        if (labelToEdit == null) {
+            // Creating a new label: check conflicts only against active (unarchived) labels.
+            labels.filterNot { it.isArchived }.map { it.name }
+        } else {
+            // Editing an existing label: check conflicts against all labels to avoid PK collision.
+            labels.map { it.name }
+        }
+
+    return !nameList
+        .map { it.lowercase() }
+        .minus(labelToEdit?.name?.lowercase())
+        .contains(name.lowercase())
 }
 
 class AddEditLabelViewModel(

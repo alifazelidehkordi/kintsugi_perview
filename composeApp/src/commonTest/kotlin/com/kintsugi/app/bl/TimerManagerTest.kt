@@ -30,7 +30,9 @@ import com.kintsugi.app.data.settings.BreakBudgetData
 import com.kintsugi.app.data.settings.LongBreakData
 import com.kintsugi.app.data.settings.SettingsRepository
 import com.kintsugi.app.data.settings.streakInUse
+import com.kintsugi.app.fakes.FakeDailyEntryDao
 import com.kintsugi.app.fakes.FakeEventListener
+import com.kintsugi.app.fakes.FakeHabitDao
 import com.kintsugi.app.fakes.FakeLabelDao
 import com.kintsugi.app.fakes.FakeSessionDao
 import com.kintsugi.app.fakes.FakeSettingsRepository
@@ -79,6 +81,8 @@ class TimerManagerTest {
                     sessionDao = FakeSessionDao(),
                     labelDao = FakeLabelDao(),
                     timerProfileDao = FakeTimerProfileDao(),
+                    habitDao = FakeHabitDao(),
+                    dailyEntryDao = FakeDailyEntryDao(),
                     settingsRepo = settingsRepo,
                     coroutineScope = testScope,
                 )

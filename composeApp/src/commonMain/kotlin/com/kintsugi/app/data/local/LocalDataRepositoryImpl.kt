@@ -192,13 +192,63 @@ internal class LocalDataRepositoryImpl(
         sessionDao.deleteAll()
     }
 
-    override suspend fun insertLabel(label: Label): Long = labelDao.insert(label.toLocal())
+    override suspend fun insertLabel(label: Label): Long {
+        val localLabel = label.toLocal()
+        val existing = labelDao.selectByName(localLabel.name).first()
+        return if (existing != null) {
+            labelDao.updateLabel(
+                newName = localLabel.name,
+                newColorIndex = localLabel.colorIndex,
+                newUseDefaultTimeProfile = localLabel.useDefaultTimeProfile,
+                newTimerProfileName = localLabel.timerProfileName,
+                newIsCountdown = localLabel.isCountdown,
+                newWorkDuration = localLabel.workDuration,
+                newIsBreakEnabled = localLabel.isBreakEnabled,
+                newBreakDuration = localLabel.breakDuration,
+                newIsLongBreakEnabled = localLabel.isLongBreakEnabled,
+                newLongBreakDuration = localLabel.longBreakDuration,
+                newSessionsBeforeLongBreak = localLabel.sessionsBeforeLongBreak,
+                newWorkBreakRatio = localLabel.workBreakRatio,
+                name = localLabel.name,
+            )
+            if (existing.isArchived) {
+                updateLabelIsArchived(localLabel.name, false)
+            }
+            existing.orderIndex
+        } else {
+            labelDao.insert(localLabel)
+        }
+    }
 
     override suspend fun insertLabelAndBulkRearrange(
         label: Label,
         labelsToUpdate: List<Pair<String, Long>>,
     ) {
-        labelDao.insertLabelAndBulkRearrange(label.toLocal(), labelsToUpdate)
+        val localLabel = label.toLocal()
+        val existing = labelDao.selectByName(localLabel.name).first()
+        if (existing != null) {
+            labelDao.updateLabel(
+                newName = localLabel.name,
+                newColorIndex = localLabel.colorIndex,
+                newUseDefaultTimeProfile = localLabel.useDefaultTimeProfile,
+                newTimerProfileName = localLabel.timerProfileName,
+                newIsCountdown = localLabel.isCountdown,
+                newWorkDuration = localLabel.workDuration,
+                newIsBreakEnabled = localLabel.isBreakEnabled,
+                newBreakDuration = localLabel.breakDuration,
+                newIsLongBreakEnabled = localLabel.isLongBreakEnabled,
+                newLongBreakDuration = localLabel.longBreakDuration,
+                newSessionsBeforeLongBreak = localLabel.sessionsBeforeLongBreak,
+                newWorkBreakRatio = localLabel.workBreakRatio,
+                name = localLabel.name,
+            )
+            if (existing.isArchived) {
+                updateLabelIsArchived(localLabel.name, false)
+            }
+            bulkUpdateLabelOrderIndex(labelsToUpdate)
+        } else {
+            labelDao.insertLabelAndBulkRearrange(localLabel, labelsToUpdate)
+        }
     }
 
     override suspend fun updateLabelOrderIndex(
@@ -246,6 +296,7 @@ internal class LocalDataRepositoryImpl(
         newIsArchived: Boolean,
     ) {
         labelDao.updateIsArchived(newIsArchived, name)
+        habitDao.updateHabitArchivedByLabel(name, newIsArchived)
     }
 
     override fun selectLabelByName(name: String): Flow<Label?> =
@@ -290,6 +341,7 @@ internal class LocalDataRepositoryImpl(
 
     override suspend fun archiveAllButDefault() {
         labelDao.archiveAllButDefault()
+        habitDao.archiveAllButDefaultHabits()
     }
 
     override suspend fun insertHabit(habit: Habit): Long = habitDao.insertHabit(habit.toLocal())
@@ -299,7 +351,7 @@ internal class LocalDataRepositoryImpl(
         label: Label,
     ): Long =
         try {
-            labelDao.insert(label.toLocal())
+            insertLabel(label)
             habitDao.insertHabit(habit.toLocal())
         } catch (e: Exception) {
             -1L

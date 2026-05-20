@@ -25,6 +25,8 @@ import com.kintsugi.app.data.model.Label
 import com.kintsugi.app.data.model.Session
 import com.kintsugi.app.data.model.toLocal
 import com.kintsugi.app.data.settings.SettingsRepository
+import com.kintsugi.app.fakes.FakeDailyEntryDao
+import com.kintsugi.app.fakes.FakeHabitDao
 import com.kintsugi.app.fakes.FakeInstallDateProvider
 import com.kintsugi.app.fakes.FakeLabelDao
 import com.kintsugi.app.fakes.FakeSessionDao
@@ -67,11 +69,13 @@ class StatsViewModelTest {
                 settingsRepository = FakeSettingsRepository()
                 localDataRepository =
                     LocalDataRepositoryImpl(
-                        fakeSessionDao,
-                        fakeLabelDao,
-                        fakeTimerProfileDao,
-                        settingsRepository,
-                        this,
+                        sessionDao = fakeSessionDao,
+                        labelDao = fakeLabelDao,
+                        timerProfileDao = fakeTimerProfileDao,
+                        habitDao = FakeHabitDao(),
+                        dailyEntryDao = FakeDailyEntryDao(),
+                        settingsRepo = settingsRepository,
+                        coroutineScope = this,
                     )
                 viewModel =
                     StatisticsViewModel(

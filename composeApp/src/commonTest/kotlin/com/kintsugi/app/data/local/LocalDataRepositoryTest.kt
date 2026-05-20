@@ -17,6 +17,7 @@
  */
 package com.kintsugi.app.data.local
 
+import com.kintsugi.app.data.model.Habit
 import com.kintsugi.app.data.model.Label
 import com.kintsugi.app.data.model.Session
 import com.kintsugi.app.data.model.TimerProfile
@@ -57,6 +58,8 @@ class LocalDataRepositoryTest : RoomDatabaseTest() {
                     sessionDao = db.sessionsDao(),
                     labelDao = db.labelsDao(),
                     timerProfileDao = db.timerProfileDao(),
+                    habitDao = db.habitDao(),
+                    dailyEntryDao = db.dailyEntryDao(),
                     settingsRepo = settingsRepo,
                     coroutineScope = this,
                 )
@@ -373,6 +376,81 @@ class LocalDataRepositoryTest : RoomDatabaseTest() {
             )
             remainingSessions = repo.selectAllSessions().first()
             assertEquals(0, remainingSessions.size)
+        }
+
+    @Test
+    fun testLabelArchivingCascadesToHabitsAndUnarchivesOnReuse() =
+        runTest {
+            val labelName = "Gym"
+            val newLabel =
+                Label(
+                    name = labelName,
+                    colorIndex = 1,
+                    orderIndex = 10,
+                    isArchived = false,
+                    timerProfile = TimerProfile(),
+                )
+            val newHabit =
+                Habit(
+                    id = 0,
+                    title = "Go to gym",
+                    description = "Every day",
+                    labelName = labelName,
+                    scheduledDays = emptySet(),
+                    time = null,
+                    orderIndex = 0,
+                    reminder = false,
+                    isArchived = false,
+                    isOneTime = false,
+                    dueDate = null,
+                    icon = "",
+                    domain = "جسم",
+                    mve = "",
+                    goal = "",
+                )
+
+            // Insert habit and label
+            val habitId = repo.insertHabitWithLabel(newHabit, newLabel)
+
+            // Verify active habits contains this habit
+            var activeHabits = repo.selectActiveHabits().first()
+            assertTrue(activeHabits.any { it.id == habitId })
+
+            // Archive the label
+            repo.updateLabelIsArchived(labelName, true)
+
+            // Verify label is archived
+            val archivedLabel = repo.selectLabelByName(labelName).first()
+            assertTrue(archivedLabel!!.isArchived)
+
+            // Verify active habits does NOT contain this habit anymore
+            activeHabits = repo.selectActiveHabits().first()
+            assertTrue(activeHabits.none { it.id == habitId })
+
+            // Verify habit is archived in database
+            var allHabits = repo.selectAllHabits().first()
+            val habitInDb = allHabits.first { it.id == habitId }
+            assertTrue(habitInDb.isArchived)
+
+            // Unarchive/Reuse label
+            repo.insertLabel(newLabel)
+
+            // Verify label is unarchived
+            val unarchivedLabel = repo.selectLabelByName(labelName).first()
+            assertTrue(!unarchivedLabel!!.isArchived)
+
+            // Verify habit is also unarchived
+            allHabits = repo.selectAllHabits().first()
+            val unarchivedHabitInDb = allHabits.first { it.id == habitId }
+            assertTrue(!unarchivedHabitInDb.isArchived)
+
+            // Verify active habits contains this habit again
+            activeHabits = repo.selectActiveHabits().first()
+            assertTrue(activeHabits.any { it.id == habitId })
+
+            // Clean up
+            repo.deleteHabit(habitId)
+            repo.deleteLabel(labelName)
         }
 
     companion object {

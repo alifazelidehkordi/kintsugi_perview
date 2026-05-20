@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.kintsugi.app.bl.LabelData
 import com.kintsugi.app.bl.isDefault
 import com.kintsugi.app.data.model.Label
 import com.kintsugi.app.ui.ConfirmationDialog
@@ -252,7 +253,11 @@ fun StatisticsScreen(
                     ) {
                         AddEditSessionContent(
                             session = uiState.newSession,
-                            labelData = uiState.labels.first { it.name == uiState.newSession.label },
+                            labelData =
+                                uiState.labels.firstOrNull { it.name == uiState.newSession.label } ?: LabelData(
+                                    uiState.newSession.label,
+                                    0,
+                                ),
                             onUpdate = {
                                 viewModel.updateSessionToEdit(it)
                             },
