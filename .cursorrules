@@ -1,0 +1,16 @@
+# Project Rules and Guidelines
+
+## Development Workflow
+After making any code changes in the project:
+1. **Run a Test Build:** Verify that the project compiles and passes tests successfully.
+   - Run: `./gradlew :composeApp:testGoogleDebugUnitTest` (or `./gradlew assembleDebug` / `./gradlew compileGoogleDebugSources` as appropriate).
+2. **Git Commit & Push:**
+   - Commit all changes locally with a descriptive commit message:
+     ```bash
+     git add .
+     git commit -m "Descriptive commit message"
+     ```
+   - Push the commits to the local/remote repository:
+     ```bash
+     git push
+     ```
