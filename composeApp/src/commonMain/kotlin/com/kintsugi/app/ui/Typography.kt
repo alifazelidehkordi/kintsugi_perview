@@ -59,21 +59,21 @@ val baseline = Typography()
 fun appTypography(): Typography {
     val bodyFont = bodyFontFamily()
     return Typography(
-        displayLarge = baseline.displayLarge,
-        displayMedium = baseline.displayMedium,
-        displaySmall = baseline.displaySmall,
-        headlineLarge = baseline.headlineLarge,
-        headlineMedium = baseline.headlineMedium,
-        headlineSmall = baseline.headlineSmall,
+        displayLarge = baseline.displayLarge.copy(fontFamily = bodyFont),
+        displayMedium = baseline.displayMedium.copy(fontFamily = bodyFont),
+        displaySmall = baseline.displaySmall.copy(fontFamily = bodyFont),
+        headlineLarge = baseline.headlineLarge.copy(fontFamily = bodyFont),
+        headlineMedium = baseline.headlineMedium.copy(fontFamily = bodyFont),
+        headlineSmall = baseline.headlineSmall.copy(fontFamily = bodyFont),
         titleLarge = baseline.titleLarge.copy(fontFamily = bodyFont),
         titleMedium = baseline.titleMedium.copy(fontFamily = bodyFont),
         titleSmall = baseline.titleSmall.copy(fontFamily = bodyFont),
         bodyLarge = baseline.bodyLarge.copy(fontFamily = bodyFont),
         bodyMedium = baseline.bodyMedium.copy(fontFamily = bodyFont),
         bodySmall = baseline.bodySmall.copy(fontFamily = bodyFont),
-        labelLarge = baseline.labelLarge,
-        labelMedium = baseline.labelMedium,
-        labelSmall = baseline.labelSmall,
+        labelLarge = baseline.labelLarge.copy(fontFamily = bodyFont),
+        labelMedium = baseline.labelMedium.copy(fontFamily = bodyFont),
+        labelSmall = baseline.labelSmall.copy(fontFamily = bodyFont),
     )
 }
 
